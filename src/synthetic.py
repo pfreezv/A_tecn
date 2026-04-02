@@ -17,14 +17,18 @@ def generate_regime_data(
     rng = np.random.default_rng(seed)
     dates = pd.bdate_range(start_date, periods=n_days)
 
-    # Define regime sequence: bull → sideways → bear → bull → bear → bull
+    # Regime sequence proportions: bull → sideways → bear → bull → bear → bull
+    regime_fractions = [
+        (0.00, 0.20, 0),   # bull
+        (0.20, 0.37, 1),   # sideways
+        (0.37, 0.53, 2),   # bear
+        (0.53, 0.73, 0),   # bull
+        (0.73, 0.85, 2),   # bear
+        (0.85, 1.00, 0),   # bull
+    ]
     regime_blocks = [
-        (0, 120, 0),    # bull
-        (120, 220, 1),  # sideways
-        (220, 320, 2),  # bear
-        (320, 440, 0),  # bull
-        (440, 510, 2),  # bear
-        (510, 600, 0),  # bull
+        (int(f0 * n_days), int(f1 * n_days), r)
+        for f0, f1, r in regime_fractions
     ]
 
     # Regime parameters: (daily_drift, daily_vol, volume_base, volume_vol)
