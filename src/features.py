@@ -1,6 +1,9 @@
 """Feature engineering for regime detection.
 
 All indicators computed manually — no pandas_ta dependency required.
+
+V3: Added asymmetric features that help distinguish bull from bear regimes
+(upside/downside volatility, skewness, drawdown).
 """
 
 import numpy as np
@@ -16,6 +19,12 @@ FEATURE_COLS = [
     "dist_sma50_pct",
     "atr_pct",
     "volume_ratio_20",
+    # New asymmetric features
+    "upside_vol_20",
+    "downside_vol_20",
+    "vol_asymmetry",
+    "skew_20",
+    "drawdown_pct",
 ]
 
 
@@ -46,17 +55,17 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
     """Compute technical features on OHLCV dataframe.
 
     Returns a copy with indicator columns and the feature matrix columns
-    (FEATURE_COLS) appended. Rows with NaN/inf in features are dropped.
+    (FEATURE_COLS) appended.
     """
     df = df.copy()
 
-    # Technical indicators (manual — no external TA library needed)
+    # Technical indicators
     df["SMA_10"] = _sma(df["Close"], 10)
     df["SMA_50"] = _sma(df["Close"], 50)
     df["RSI_14"] = _rsi(df["Close"], 14)
     df["ATR_14"] = _atr(df["High"], df["Low"], df["Close"], 14)
 
-    # Derived features
+    # Base features
     df["ret_1d"] = np.log(df["Close"] / df["Close"].shift(1))
     df["ret_5d"] = np.log(df["Close"] / df["Close"].shift(5))
     df["vol_20"] = df["ret_1d"].rolling(20).std()
@@ -64,6 +73,24 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
     df["dist_sma50_pct"] = (df["Close"] / df["SMA_50"]) - 1
     df["atr_pct"] = df["ATR_14"] / df["Close"]
     df["volume_ratio_20"] = df["Volume"] / df["Volume"].rolling(20).mean()
+
+    # --- Asymmetric features (key for separating bull vs bear) ---
+
+    # Upside vs downside volatility (20-day rolling)
+    pos_ret = df["ret_1d"].clip(lower=0)
+    neg_ret = df["ret_1d"].clip(upper=0)
+    df["upside_vol_20"] = pos_ret.rolling(20).std()
+    df["downside_vol_20"] = neg_ret.rolling(20).std()
+
+    # Volatility asymmetry: >0 means more upside vol, <0 means more downside
+    df["vol_asymmetry"] = df["upside_vol_20"] - df["downside_vol_20"]
+
+    # Rolling skewness (20-day) — positive in bull, negative in bear
+    df["skew_20"] = df["ret_1d"].rolling(20).skew()
+
+    # Drawdown from rolling max (captures bear regime depth)
+    rolling_max = df["Close"].cummax()
+    df["drawdown_pct"] = (df["Close"] / rolling_max) - 1
 
     return df
 
