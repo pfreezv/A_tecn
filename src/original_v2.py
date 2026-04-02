@@ -5,7 +5,7 @@ import warnings
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import pandas_ta as ta
+from .features import _sma, _rsi, _atr
 import yfinance as yf
 from datetime import date, timedelta
 from sklearn.cluster import KMeans
@@ -47,10 +47,10 @@ def analizar_accion_y_clusterizar_v2(
 
     df = data.copy()
 
-    df["SMA_10"] = ta.sma(df["Close"], length=10)
-    df["SMA_50"] = ta.sma(df["Close"], length=50)
-    df["RSI_14"] = ta.rsi(df["Close"], length=14)
-    df["ATR_14"] = ta.atr(df["High"], df["Low"], df["Close"], length=14)
+    df["SMA_10"] = _sma(df["Close"], 10)
+    df["SMA_50"] = _sma(df["Close"], 50)
+    df["RSI_14"] = _rsi(df["Close"], 14)
+    df["ATR_14"] = _atr(df["High"], df["Low"], df["Close"], 14)
 
     df["ret_1d"] = np.log(df["Close"] / df["Close"].shift(1))
     df["ret_5d"] = np.log(df["Close"] / df["Close"].shift(5))

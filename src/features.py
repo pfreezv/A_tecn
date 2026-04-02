@@ -1,8 +1,10 @@
-"""Feature engineering for regime detection."""
+"""Feature engineering for regime detection.
+
+All indicators computed manually — no pandas_ta dependency required.
+"""
 
 import numpy as np
 import pandas as pd
-import pandas_ta as ta
 
 
 FEATURE_COLS = [
@@ -17,6 +19,29 @@ FEATURE_COLS = [
 ]
 
 
+def _sma(series: pd.Series, length: int) -> pd.Series:
+    return series.rolling(window=length).mean()
+
+
+def _rsi(series: pd.Series, length: int = 14) -> pd.Series:
+    delta = series.diff()
+    gain = delta.clip(lower=0)
+    loss = -delta.clip(upper=0)
+    avg_gain = gain.ewm(alpha=1 / length, min_periods=length).mean()
+    avg_loss = loss.ewm(alpha=1 / length, min_periods=length).mean()
+    rs = avg_gain / avg_loss
+    return 100 - (100 / (1 + rs))
+
+
+def _atr(high: pd.Series, low: pd.Series, close: pd.Series, length: int = 14) -> pd.Series:
+    prev_close = close.shift(1)
+    tr = pd.concat(
+        [high - low, (high - prev_close).abs(), (low - prev_close).abs()],
+        axis=1,
+    ).max(axis=1)
+    return tr.ewm(alpha=1 / length, min_periods=length).mean()
+
+
 def build_features(df: pd.DataFrame) -> pd.DataFrame:
     """Compute technical features on OHLCV dataframe.
 
@@ -25,11 +50,11 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
     """
     df = df.copy()
 
-    # Technical indicators
-    df["SMA_10"] = ta.sma(df["Close"], length=10)
-    df["SMA_50"] = ta.sma(df["Close"], length=50)
-    df["RSI_14"] = ta.rsi(df["Close"], length=14)
-    df["ATR_14"] = ta.atr(df["High"], df["Low"], df["Close"], length=14)
+    # Technical indicators (manual — no external TA library needed)
+    df["SMA_10"] = _sma(df["Close"], 10)
+    df["SMA_50"] = _sma(df["Close"], 50)
+    df["RSI_14"] = _rsi(df["Close"], 14)
+    df["ATR_14"] = _atr(df["High"], df["Low"], df["Close"], 14)
 
     # Derived features
     df["ret_1d"] = np.log(df["Close"] / df["Close"].shift(1))
