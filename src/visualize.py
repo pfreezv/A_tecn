@@ -78,3 +78,18 @@ def plot_forward_returns_heatmap(
     plt.title(f"Forward Returns by Regime — {ticker}")
     plt.tight_layout()
     plt.show()
+
+
+def plot_equity_curves(results, ticker: str) -> None:
+    """Plot equity curves for a list of BacktestResult objects."""
+    plt.figure(figsize=(12, 6))
+    for r in results:
+        plt.plot(r.equity_curve.index, r.equity_curve.values,
+                 label=f"{r.strategy_name} (Sharpe {r.sharpe_ratio:.2f})", linewidth=1.8)
+    plt.title(f"Equity Curves — {ticker}")
+    plt.xlabel("Date")
+    plt.ylabel("Equity (normalized)")
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.show()

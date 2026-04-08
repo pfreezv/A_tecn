@@ -4,13 +4,14 @@ Instead of a single train/test split, this slides a window forward
 and retrains every `retrain_every` days, simulating real-world deployment.
 """
 
+from collections import Counter
+
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from sklearn.mixture import GaussianMixture
 from hmmlearn.hmm import GaussianHMM
-from sklearn.metrics import silhouette_score
 
 
 def _fit_kmeans(X_train: np.ndarray, k: int) -> KMeans:
@@ -83,7 +84,8 @@ def walk_forward(
     if n < min_train + retrain_every:
         raise ValueError(f"Need at least {min_train + retrain_every} samples, got {n}")
 
-    results = []
+    # date -> {KM_regime, GMM_regime, HMM_regime}
+    records: dict[pd.Timestamp, dict[str, str]] = {}
 
     for train_end in range(min_train, n, retrain_every):
         eval_end = min(train_end + retrain_every, n)
@@ -122,65 +124,61 @@ def walk_forward(
             hmm_eval_labels = np.full(len(eval_data), -1)
             hmm_train_labels = np.full(len(train_data), -1)
 
-        # Build semantic maps from training profiles
-        for model_name, train_labels, eval_labels in [
-            ("KM", km_train_labels, km_eval_labels),
-            ("GMM", gmm_train_labels, gmm_eval_labels),
-            ("HMM", hmm_train_labels, hmm_eval_labels),
+        # Build semantic maps per model from training profiles
+        sem_maps: dict[str, dict[int, str]] = {}
+        for model_name, train_labels in [
+            ("KM", km_train_labels),
+            ("GMM", gmm_train_labels),
+            ("HMM", hmm_train_labels),
         ]:
-            # Profile from training data
             train_df_tmp = train_data[feature_cols].copy()
             train_df_tmp["_label"] = train_labels
             profile = train_df_tmp.groupby("_label")[feature_cols].mean()
             median_vol = profile["vol_20"].median() if "vol_20" in profile.columns else 0.01
 
-            sem_map = {}
+            sem_map: dict[int, str] = {}
             for cid, row in profile.iterrows():
                 if cid == -1:
-                    sem_map[cid] = "unknown"
+                    sem_map[int(cid)] = "unknown"
                 else:
-                    sem_map[cid] = _classify_regime(row, median_vol)
+                    sem_map[int(cid)] = _classify_regime(row, median_vol)
+            sem_maps[model_name] = sem_map
 
-            # Apply to eval labels
-            for i, idx in enumerate(eval_data.index):
-                label = eval_labels[i]
-                sem = sem_map.get(label, "unknown")
-                # Find or create entry
-                found = False
-                for r in results:
-                    if r["date"] == idx:
-                        r[f"{model_name}_regime"] = sem
-                        found = True
-                        break
-                if not found:
-                    results.append({
-                        "date": idx,
-                        f"{model_name}_regime": sem,
-                    })
+        # Assign semantic labels for this eval window (O(1) per date)
+        eval_model_labels = {
+            "KM": km_eval_labels,
+            "GMM": gmm_eval_labels,
+            "HMM": hmm_eval_labels,
+        }
+        for i, idx in enumerate(eval_data.index):
+            rec = records.setdefault(idx, {})
+            for model_name, eval_labels in eval_model_labels.items():
+                rec[f"{model_name}_regime"] = sem_maps[model_name].get(
+                    int(eval_labels[i]), "unknown"
+                )
 
     # Build DataFrame
-    wf = pd.DataFrame(results).set_index("date").sort_index()
+    wf = pd.DataFrame.from_dict(records, orient="index").sort_index()
+    wf.index.name = "date"
 
     # Fill missing columns
     for col in ["KM_regime", "GMM_regime", "HMM_regime"]:
         if col not in wf.columns:
             wf[col] = "unknown"
 
-    # Consensus
-    def _vote(row):
-        votes = [row["KM_regime"], row["GMM_regime"], row["HMM_regime"]]
-        votes = [v for v in votes if v != "unknown"]
-        if not votes:
-            return "unknown"
-        from collections import Counter
-        return Counter(votes).most_common(1)[0][0]
+    # Consensus (vectorized row-wise over 3 columns)
+    model_cols = ["KM_regime", "GMM_regime", "HMM_regime"]
 
-    wf["Consensus"] = wf.apply(_vote, axis=1)
-    wf["Confidence"] = wf.apply(
-        lambda row: sum(1 for c in ["KM_regime", "GMM_regime", "HMM_regime"]
-                        if row[c] == row["Consensus"]) / 3.0,
-        axis=1,
-    )
+    def _vote(row: pd.Series) -> tuple[str, float]:
+        votes = [v for v in row.values if v != "unknown"]
+        if not votes:
+            return "unknown", 0.0
+        label, count = Counter(votes).most_common(1)[0]
+        return label, count / 3.0
+
+    vote_pairs = wf[model_cols].apply(_vote, axis=1)
+    wf["Consensus"] = vote_pairs.map(lambda p: p[0])
+    wf["Confidence"] = vote_pairs.map(lambda p: p[1])
     wf["SignalStrength"] = wf["Confidence"].map(
         lambda c: "strong" if c == 1.0 else ("moderate" if c >= 0.67 else "weak")
     )

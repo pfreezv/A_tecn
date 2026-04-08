@@ -1,12 +1,10 @@
 """Data acquisition and caching for market data."""
 
 import hashlib
-import os
 from datetime import date, timedelta
 from pathlib import Path
 
 import pandas as pd
-import yfinance as yf
 
 CACHE_DIR = Path(__file__).resolve().parent.parent / ".cache"
 
@@ -30,6 +28,15 @@ def fetch_ohlcv(
 
     if use_cache and cache_file.exists():
         return pd.read_parquet(cache_file)
+
+    try:
+        import yfinance as yf
+    except ImportError as e:
+        raise ImportError(
+            "yfinance is required to fetch live data. Install it with "
+            "`pip install yfinance`, or use the synthetic data generator "
+            "(src.synthetic.generate_regime_data)."
+        ) from e
 
     data = yf.download(
         ticker,
