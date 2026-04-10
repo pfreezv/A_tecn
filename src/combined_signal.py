@@ -423,6 +423,141 @@ def run_combined_signal(
     )
 
 
+# ── P&L Portfolio Simulation ─────────────────────────────────────────────────
+
+def run_signal_pnl(
+    prices:  pd.Series,
+    result:  "CombinedSignalResult",
+    horizon: int = 10,
+) -> dict:
+    """Simula la estrategia de señales combinadas vs buy-and-hold.
+
+    Reglas (sin apalancamiento, sin posiciones cortas):
+      BUY_DIP    → entrar largo al día siguiente, mantener `horizon` días
+      TAKE_PROFIT → salir de posición larga (si la hay) al final del día
+      Sin señal  → caja (0% invertido)
+
+    Evita look-ahead bias: las señales se basan en el cierre de hoy,
+    la posición entra a partir del día siguiente.
+    """
+    n     = len(prices)
+    dates = prices.index
+
+    buy_dates = set()
+    tp_dates  = set()
+    for _, row in result.active_signals.iterrows():
+        d = pd.Timestamp(row["Fecha"])
+        if row["Señal"] == "BUY_DIP":
+            buy_dates.add(d)
+        else:
+            tp_dates.add(d)
+
+    pos       = np.zeros(n)
+    in_pos    = False
+    days_held = 0
+
+    for i in range(n):
+        d = dates[i]
+
+        if in_pos:
+            pos[i]     = 1.0
+            days_held += 1
+            if d in tp_dates or days_held >= horizon:
+                in_pos    = False
+                days_held = 0
+
+        if not in_pos and d in buy_dates:
+            in_pos    = True   # posición arranca el día siguiente
+            days_held = 0
+
+    position_s = pd.Series(pos, index=dates)
+    log_ret    = np.log(prices / prices.shift(1)).fillna(0)
+    strat_ret  = log_ret * position_s
+
+    equity_s  = (np.exp(strat_ret.cumsum()))
+    equity_bh = (np.exp(log_ret.cumsum()))
+    equity_s  = equity_s  / equity_s.iloc[0]
+    equity_bh = equity_bh / equity_bh.iloc[0]
+
+    n_days  = n
+    n_years = n_days / 252
+
+    def _metrics(ret, eq, name):
+        tot = float(eq.iloc[-1] - 1)
+        ann = float((1 + tot) ** (1 / n_years) - 1) if n_years > 0 else 0.0
+        vol = float(ret.std() * np.sqrt(252))
+        sh  = ann / vol if vol > 0 else 0.0
+        dd  = float((eq / eq.cummax() - 1).min())
+        act = int((ret != 0).sum())
+        wr  = float((ret[ret != 0] > 0).mean()) if act > 0 else 0.0
+        return {
+            "Estrategia":      name,
+            "Retorno total":   f"{tot:+.1%}",
+            "Ret. anualizado": f"{ann:+.1%}",
+            "Vol. anualizada": f"{vol:.1%}",
+            "Sharpe":          f"{sh:.2f}",
+            "Max Drawdown":    f"{dd:.1%}",
+            "Días en mercado": f"{act} / {n_days}  ({act/n_days:.0%})",
+            "Win rate días":   f"{wr:.0%}",
+        }
+
+    return {
+        "version":   result.version,
+        "ticker":    result.ticker,
+        "horizon":   horizon,
+        "metrics":   [
+            _metrics(strat_ret, equity_s,  f"Señales [{result.version}]"),
+            _metrics(log_ret,   equity_bh, "Buy & Hold"),
+        ],
+        "equity_s":  equity_s,
+        "equity_bh": equity_bh,
+        "position":  position_s,
+        "pct_in":    float(position_s.mean()),
+        "n_trades":  len(buy_dates),
+    }
+
+
+def print_pnl_comparison(pnl_base: dict, pnl_vix: Optional[dict] = None) -> None:
+    """Imprime comparativa P&L completa."""
+    ticker  = pnl_base["ticker"]
+    horizon = pnl_base["horizon"]
+
+    print("\n" + "═" * 72)
+    print(f"  P&L vs BUY & HOLD — {ticker}  (horizonte: {horizon} días por señal)")
+    print("═" * 72)
+
+    # Tabla de métricas
+    all_rows = list(pnl_base["metrics"])
+    if pnl_vix:
+        # Añadir fila de señales +VIX (sin duplicar B&H)
+        all_rows.insert(1, pnl_vix["metrics"][0])
+
+    df = pd.DataFrame(all_rows).set_index("Estrategia")
+    print(f"\n{df.to_string()}\n")
+
+    # Resumen interpretativo
+    base_m = pnl_base["metrics"][0]
+    bh_m   = pnl_base["metrics"][1]
+
+    base_ret = float(pnl_base["equity_s"].iloc[-1] - 1)
+    bh_ret   = float(pnl_base["equity_bh"].iloc[-1] - 1)
+    delta    = base_ret - bh_ret
+
+    print(f"  Tiempo en mercado (Base):  {pnl_base['pct_in']:.0%}  "
+          f"({int(pnl_base['n_trades'])} operaciones BUY_DIP)")
+    if pnl_vix:
+        print(f"  Tiempo en mercado (+VIX): {pnl_vix['pct_in']:.0%}  "
+              f"({int(pnl_vix['n_trades'])} operaciones BUY_DIP)")
+    print(f"  Diferencia vs B&H (Base):  {delta:+.1%}")
+    if pnl_vix:
+        vix_ret  = float(pnl_vix["equity_s"].iloc[-1] - 1)
+        delta_v  = vix_ret - bh_ret
+        print(f"  Diferencia vs B&H (+VIX): {delta_v:+.1%}")
+
+    print(f"\n  Nota: estrategia opera solo en caídas anómalas (BUY_DIP).")
+    print(f"  El menor drawdown y la menor volatilidad reflejan el tiempo en caja.")
+
+
 # ── Reporting ─────────────────────────────────────────────────────────────────
 
 def print_combined_report(result: CombinedSignalResult) -> None:

@@ -181,11 +181,18 @@ def main():
         )
         print_combined_report(vix_result)
 
-    # ── Comparativa ───────────────────────────────────────────────────────────
+    # ── Comparativa señales ───────────────────────────────────────────────────
     if vix_result is not None:
         print_comparison(base, vix_result)
     else:
         print("\n  (Pasa --vix vix_data.csv para comparar con la versión +VIX)")
+
+    # ── P&L vs Buy & Hold ─────────────────────────────────────────────────────
+    from src.combined_signal import run_signal_pnl, print_pnl_comparison
+
+    pnl_base = run_signal_pnl(prices, base, horizon=args.horizon)
+    pnl_vix  = run_signal_pnl(prices, vix_result, horizon=args.horizon) if vix_result else None
+    print_pnl_comparison(pnl_base, pnl_vix)
 
 
 if __name__ == "__main__":
