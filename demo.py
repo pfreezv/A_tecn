@@ -44,6 +44,8 @@ def parse_args():
     p.add_argument("--start", default="2020-01-01", help="Fecha inicio (solo con --ticker)")
     p.add_argument("--no-plots", action="store_true", help="No mostrar gráficos")
     p.add_argument("--walkforward", action="store_true", help="Ejecutar walk-forward (lento)")
+    p.add_argument("--vix", default=None,
+                   help="Ruta a CSV del VIX (Date,Close) para activar el overlay +VIX")
     p.add_argument("--k-min", type=int, default=2)
     p.add_argument("--k-max", type=int, default=5)
     return p.parse_args()
@@ -150,6 +152,56 @@ def run_backtest_section(ensemble_result):
 
 
 # ──────────────────────────────────────────────────────────────────────────────
+# Sección VIX overlay
+# ──────────────────────────────────────────────────────────────────────────────
+
+def run_vix_section(ensemble_result, vix_path, raw):
+    from src.vix import load_vix, apply_vix_overlay, print_vix_summary
+    from src.signals import generate_signals, print_signals
+    from src.backtest import run_backtest, run_buyhold, compare_strategies
+
+    print(f"\n{'='*60}")
+    print("SECCIÓN VIX — Overlay de miedo de mercado")
+    print('='*60)
+
+    vix = load_vix(vix_path)
+    print(f"VIX cargado: {len(vix)} días | "
+          f"actual: {vix.iloc[-1]:.1f} | "
+          f"máx: {vix.max():.1f} ({vix.idxmax().date()})")
+
+    overlay = apply_vix_overlay(
+        base_regime=ensemble_result.consensus,
+        base_confidence=ensemble_result.confidence,
+        vix=vix,
+    )
+    print_vix_summary(overlay)
+
+    # Señales +VIX
+    print("\n--- Señales +VIX ---")
+    sig_vix = generate_signals(
+        consensus=overlay.regime,
+        confidence=overlay.confidence,
+        prices=ensemble_result.df["Close"].reindex(overlay.regime.index),
+    )
+    for k, v in sig_vix.summary.items():
+        print(f"  {k:<28} {v}")
+
+    # Backtest +VIX vs base vs Buy&Hold
+    print(f"\n--- Backtest comparativo ---")
+    prices = raw["Close"].reindex(overlay.regime.index).dropna()
+    strat_vix = run_backtest(prices, overlay.regime, strategy_name="Regime +VIX")
+    strat_base = run_backtest(
+        ensemble_result.df["Close"].reindex(prices.index),
+        ensemble_result.consensus.reindex(prices.index),
+        strategy_name="Regime Base",
+    )
+    bh = run_buyhold(prices)
+    print(compare_strategies([strat_vix, strat_base, bh]).to_string())
+
+    return overlay, strat_vix
+
+
+# ──────────────────────────────────────────────────────────────────────────────
 # Sección 4: Walk-forward (opcional)
 # ──────────────────────────────────────────────────────────────────────────────
 
@@ -176,8 +228,9 @@ def run_walkforward_section(raw, k):
 # Gráficos
 # ──────────────────────────────────────────────────────────────────────────────
 
-def plot_results(ensemble_result, sig_result, strat, bh):
-    fig, axes = plt.subplots(4, 1, figsize=(14, 16))
+def plot_results(ensemble_result, sig_result, strat, bh, vix_overlay=None, strat_vix=None):
+    n_plots = 5 if vix_overlay is not None else 4
+    fig, axes = plt.subplots(n_plots, 1, figsize=(14, 4 * n_plots))
     fig.suptitle(f"LONQ — {ensemble_result.ticker}", fontsize=14, fontweight="bold")
 
     df = ensemble_result.df
@@ -238,6 +291,27 @@ def plot_results(ensemble_result, sig_result, strat, bh):
     ax4.set_ylim(0, 1.1)
     ax4.legend(fontsize=8)
 
+    # 5. VIX (si está disponible)
+    if vix_overlay is not None:
+        ax5 = axes[4]
+        vix = vix_overlay.vix_level
+        ax5.plot(vix.index, vix, color="#8e44ad", linewidth=1, label="VIX")
+        ax5.axhline(15, color="#2ecc71", linewidth=1, linestyle="--", label="Low (<15)")
+        ax5.axhline(25, color="#f39c12", linewidth=1, linestyle="--", label="High (>25)")
+        ax5.axhline(35, color="#e74c3c", linewidth=1, linestyle="--", label="Extreme (>35)")
+        ax5.fill_between(vix.index, vix, 35, where=(vix > 35), alpha=0.3, color="#e74c3c")
+        if strat_vix is not None:
+            ax5_twin = ax5.twinx()
+            ax5_twin.plot(strat_vix.equity_curve.index, strat_vix.equity_curve,
+                          color="#1abc9c", linewidth=1.5, linestyle=":", label="+VIX equity")
+            ax5_twin.plot(strat.equity_curve.index, strat.equity_curve,
+                          color="#3498db", linewidth=1.5, linestyle=":", label="Base equity")
+            ax5_twin.set_ylabel("Equity (base 1.0)", fontsize=8)
+            ax5_twin.legend(loc="upper right", fontsize=7)
+        ax5.set_title("VIX — Índice del miedo (zonas rojas = override bear)")
+        ax5.set_ylabel("VIX")
+        ax5.legend(loc="upper left", fontsize=8)
+
     plt.tight_layout()
     out = "lonq_demo_output.png"
     plt.savefig(out, dpi=120, bbox_inches="tight")
@@ -281,11 +355,17 @@ def main():
             acc = (ensemble_result.consensus.loc[common] == true_sem.loc[common]).mean()
             print(f"\n[Validación] Precisión vs regímenes reales: {acc:.1%}")
 
-    # Señales
+    # Señales base
     sig_result = run_signals_section(ensemble_result)
 
-    # Backtest
+    # Backtest base
     strat, bh = run_backtest_section(ensemble_result)
+
+    # ── VIX overlay (opcional) ──────────────────────────────────────────────
+    vix_overlay = None
+    strat_vix   = None
+    if args.vix:
+        vix_overlay, strat_vix = run_vix_section(ensemble_result, args.vix, raw)
 
     # Walk-forward (opcional)
     if args.walkforward:
@@ -293,7 +373,7 @@ def main():
 
     # Gráficos
     if not args.no_plots:
-        plot_results(ensemble_result, sig_result, strat, bh)
+        plot_results(ensemble_result, sig_result, strat, bh, vix_overlay, strat_vix)
 
     print("\nDemo completado.")
 
