@@ -64,6 +64,94 @@ def load_vix(path: str) -> pd.Series:
     return vix
 
 
+def fetch_vix(
+    start_date: str = "2018-01-01",
+    save_path: str | None = None,
+) -> pd.Series:
+    """Descarga el VIX actualizado desde Yahoo Finance (^VIX).
+
+    Args:
+        start_date: Fecha de inicio (YYYY-MM-DD).
+        save_path:  Si se indica, guarda el CSV en esa ruta para uso offline.
+
+    Returns:
+        Serie diaria del VIX con índice DatetimeIndex.
+    """
+    try:
+        import yfinance as yf
+    except ImportError:
+        raise ImportError("Instala yfinance:  pip install yfinance")
+
+    raw = yf.download("^VIX", start=start_date, progress=False, auto_adjust=True)
+    if raw.empty:
+        raise ValueError("Yahoo Finance no devolvió datos para ^VIX.")
+
+    # Aplanar columnas multinivel si las hay
+    raw.columns = [c[0] if isinstance(c, tuple) else c for c in raw.columns]
+    raw.index   = pd.to_datetime(raw.index).tz_localize(None)
+
+    vix = raw["Close"].dropna()
+    vix = vix[vix > 0]
+    vix.name  = "VIX"
+    vix.index.name = "Date"
+
+    if save_path:
+        vix.to_csv(save_path, index=True, header=True)
+        last = vix.index[-1].date()
+        print(f"VIX guardado en '{save_path}'  ({len(vix)} días, hasta {last})")
+
+    return vix
+
+
+def get_vix(
+    path: str = "vix_data.csv",
+    start_date: str = "2018-01-01",
+    max_age_days: int = 5,
+    auto_update: bool = True,
+) -> pd.Series:
+    """Carga el VIX de forma inteligente: CSV local si está actualizado,
+    yfinance si el archivo no existe o tiene más de `max_age_days` días.
+
+    Args:
+        path:          Ruta del CSV local.
+        start_date:    Fecha de inicio si hay que descargar.
+        max_age_days:  Días de antigüedad máxima antes de actualizar.
+        auto_update:   Si True, actualiza el CSV cuando está desactualizado.
+
+    Returns:
+        Serie diaria del VIX.
+    """
+    import os
+    from datetime import date, timedelta
+
+    needs_update = True
+
+    if os.path.exists(path):
+        vix = load_vix(path)
+        last_date = vix.index[-1].date()
+        age = (date.today() - last_date).days
+        # No actualizar en fines de semana ni festivos cercanos (≤ max_age_days)
+        if age <= max_age_days:
+            needs_update = False
+        else:
+            print(f"VIX desactualizado ({age} días desde {last_date}). Actualizando...")
+    else:
+        print(f"'{path}' no encontrado. Descargando VIX...")
+
+    if needs_update and auto_update:
+        try:
+            vix = fetch_vix(start_date=start_date, save_path=path)
+        except Exception as e:
+            print(f"No se pudo descargar el VIX ({e}).")
+            if os.path.exists(path):
+                print("Usando CSV local existente.")
+                vix = load_vix(path)
+            else:
+                return None
+
+    return vix
+
+
 # ── VIX feature engineering ──────────────────────────────────────────────────
 
 def build_vix_features(vix: pd.Series) -> pd.DataFrame:
