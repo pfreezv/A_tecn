@@ -1,0 +1,201 @@
+name: LONQ Daily Screener
+
+on:
+  # Ejecuta cada día laboral a las 22:00 UTC (después del cierre de mercados US)
+  schedule:
+    - cron: "0 22 * * 1-5"
+
+  # Permite lanzarlo manualmente desde la UI de GitHub Actions
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Modo de análisis"
+        required: true
+        default: "fast"
+        type: choice
+        options:
+          - fast
+          - deep
+      sectors:
+        description: "Sectores a analizar (vacío = todos)"
+        required: false
+        default: ""
+      top:
+        description: "Análisis profundo solo al top N (con mode=deep)"
+        required: false
+        default: "20"
+
+env:
+  PYTHON_VERSION: "3.11"
+  RESULTS_DIR: "results"
+
+jobs:
+  screen:
+    name: Asset Screening
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    permissions:
+      contents: write   # para hacer push del reporte generado
+
+    steps:
+      # ── 1. Checkout ──────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: claude/continue-lonq-7VADd
+          fetch-depth: 1
+
+      # ── 2. Python ─────────────────────────────────────────────────────────────
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      # ── 3. Dependencias ───────────────────────────────────────────────────────
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install \
+            numpy pandas scipy scikit-learn \
+            hmmlearn \
+            yfinance \
+            pyyaml \
+            matplotlib
+
+      # ── 4. Crear directorio de resultados ─────────────────────────────────────
+      - name: Create results directory
+        run: mkdir -p ${{ env.RESULTS_DIR }}
+
+      # ── 5. Determinar argumentos ──────────────────────────────────────────────
+      - name: Set screening arguments
+        id: args
+        run: |
+          # Modo: manual dispatch o schedule
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            MODE="${{ github.event.inputs.mode }}"
+            SECTORS="${{ github.event.inputs.sectors }}"
+            TOP="${{ github.event.inputs.top }}"
+          else
+            # Cron por defecto: modo rápido, todos los sectores
+            MODE="fast"
+            SECTORS=""
+            TOP=""
+          fi
+
+          # Construir flags
+          FLAGS="--workers 4 --save ${{ env.RESULTS_DIR }}"
+          if [ "$MODE" = "deep" ]; then
+            FLAGS="$FLAGS --deep --top ${TOP:-20}"
+          fi
+          if [ -n "$SECTORS" ]; then
+            FLAGS="$FLAGS --sectors $SECTORS"
+          fi
+
+          echo "FLAGS=$FLAGS" >> $GITHUB_OUTPUT
+          echo "MODE=$MODE" >> $GITHUB_OUTPUT
+          echo "Flags: $FLAGS"
+
+      # ── 6. Ejecutar screener ──────────────────────────────────────────────────
+      - name: Run LONQ screener
+        run: |
+          python screen_tickers.py ${{ steps.args.outputs.FLAGS }} \
+            2>&1 | tee ${{ env.RESULTS_DIR }}/screen_log_$(date +%Y-%m-%d).txt
+        env:
+          PYTHONUNBUFFERED: "1"
+
+      # ── 7. Generar reporte Markdown ───────────────────────────────────────────
+      - name: Generate Markdown report
+        run: |
+          python - <<'EOF'
+          import os, sys, glob, datetime
+          sys.path.insert(0, ".")
+
+          import pandas as pd
+          from src.reporter import generate_screen_report
+          from src.screener import ScreenResult
+
+          # Buscar CSV más reciente en results/
+          csvs = sorted(glob.glob("results/screen_*.csv"), reverse=True)
+          if not csvs:
+              print("No se encontró CSV de resultados.")
+              sys.exit(0)
+
+          csv_path = csvs[0]
+          print(f"Cargando resultados de: {csv_path}")
+          df = pd.read_csv(csv_path)
+
+          # Reconstruir lista de ScreenResult mínima desde el CSV
+          results = []
+          for _, row in df.iterrows():
+              # Parsear valores formateados
+              def safe_float(v):
+                  try:
+                      return float(str(v).replace("%","").replace("—","").strip()) / (
+                          100 if "%" in str(v) else 1
+                      ) if v and str(v) != "—" else None
+                  except Exception:
+                      return None
+
+              r = ScreenResult(
+                  ticker=row["Ticker"],
+                  score=int(row["Score"]),
+                  grade=row["Grado"],
+                  recommendation="",
+                  vol_annual=safe_float(row.get("Vol. anual", 0)) or 0,
+                  autocorr_5d=safe_float(row.get("Autocorr 5d", 0)) or 0,
+                  trend_strength=safe_float(row.get("Tendencia R²", 0)) or 0,
+                  n_days=int(row.get("Días", 0)),
+                  sil_avg=safe_float(row.get("Sil. avg")),
+                  reversion_score=safe_float(row.get("Rev. score")),
+                  win_rate_10d=safe_float(row.get("WR +10d")),
+                  sharpe_strategy=safe_float(row.get("Sharpe est.")),
+                  sharpe_bh=safe_float(row.get("Sharpe B&H")),
+                  error=row.get("Error") or None,
+              )
+              results.append(r)
+
+          today = datetime.date.today().isoformat()
+          out   = f"results/{today}.md"
+          mode  = os.environ.get("MODE", "RÁPIDO").upper()
+          report = generate_screen_report(
+              results,
+              mode=mode,
+              output_path=out,
+          )
+          print(f"Reporte generado: {out}")
+          print(f"Primeras 20 líneas:")
+          print("\n".join(report.splitlines()[:20]))
+          EOF
+        env:
+          MODE: ${{ steps.args.outputs.MODE }}
+
+      # ── 8. Commit y push de resultados ───────────────────────────────────────
+      - name: Commit results
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add results/
+          if git diff --cached --quiet; then
+            echo "No hay nuevos resultados que commitear."
+          else
+            TODAY=$(date +%Y-%m-%d)
+            git commit -m "chore: daily screen results ${TODAY} [skip ci]"
+            git push origin claude/continue-lonq-7VADd
+            echo "Resultados commiteados y pusheados."
+          fi
+
+      # ── 9. Resumen en el log de Actions ──────────────────────────────────────
+      - name: Print summary
+        run: |
+          LATEST_CSV=$(ls -t results/screen_*.csv 2>/dev/null | head -1)
+          if [ -n "$LATEST_CSV" ]; then
+            echo "=== Top 10 resultados ==="
+            python - "$LATEST_CSV" <<'EOF'
+          import sys, pandas as pd
+          df = pd.read_csv(sys.argv[1]).sort_values("Score", ascending=False)
+          print(df[["Ticker","Score","Grado","Vol. anual","Autocorr 5d"]].head(10).to_string(index=False))
+          EOF
+          fi

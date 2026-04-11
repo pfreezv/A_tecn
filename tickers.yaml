@@ -1,0 +1,150 @@
+# LONQ — Universo de activos para screening
+# Organizados por sector y perfil de reversión esperada
+# Añade o elimina tickers libremente
+
+# ── Consumo básico (Consumer Staples) ─────────────────────
+# Alta reversión, baja volatilidad — perfil ideal para el sistema
+consumer_staples:
+  - KO      # Coca-Cola
+  - PEP     # PepsiCo
+  - PG      # Procter & Gamble
+  - CL      # Colgate-Palmolive
+  - KMB     # Kimberly-Clark
+  - GIS     # General Mills
+  - K       # Kellogg's
+  - CPB     # Campbell Soup
+  - HSY     # Hershey
+  - MKC     # McCormick
+  - SJM     # J.M. Smucker
+  - CAG     # ConAgra Brands
+  - MO      # Altria
+  - PM      # Philip Morris
+  - BTI     # British American Tobacco
+
+# ── Utilities (Servicios públicos) ────────────────────────
+# Muy estables, correlación negativa con tasas de interés
+utilities:
+  - NEE     # NextEra Energy
+  - DUK     # Duke Energy
+  - SO      # Southern Company
+  - D       # Dominion Energy
+  - AEP     # American Electric Power
+  - EXC     # Exelon
+  - SRE     # Sempra Energy
+  - PEG     # PSEG
+  - XEL     # Xcel Energy
+  - WEC     # WEC Energy
+  - ES      # Eversource Energy
+  - ETR     # Entergy
+  - PPL     # PPL Corporation
+  - FE      # FirstEnergy
+  - AES     # AES Corporation
+
+# ── Salud / Healthcare ────────────────────────────────────
+# Defensivos, poca ciclicidad
+healthcare:
+  - JNJ     # Johnson & Johnson
+  - ABT     # Abbott Laboratories
+  - MDT     # Medtronic
+  - BMY     # Bristol-Myers Squibb
+  - PFE     # Pfizer
+  - MRK     # Merck
+  - ABBV    # AbbVie
+  - AMGN    # Amgen
+  - BSX     # Boston Scientific
+  - BDX     # Becton Dickinson
+  - ZTS     # Zoetis
+  - ELV    # Elevance Health
+  - CI      # Cigna
+
+# ── REITs ─────────────────────────────────────────────────
+# Dividendo alto, reversión fuerte, baja correlación con tech
+reits:
+  - O       # Realty Income
+  - SPG     # Simon Property Group
+  - PLD     # Prologis
+  - AMT     # American Tower
+  - CCI     # Crown Castle
+  - VICI    # VICI Properties
+  - WPC     # W.P. Carey
+  - NNN     # National Retail Properties
+  - STAG    # STAG Industrial
+  - COLD    # Americold Realty
+  - EQR     # Equity Residential
+  - AVB     # AvalonBay Communities
+  - MAA     # Mid-America Apartment
+
+# ── Financieros estables ──────────────────────────────────
+financials:
+  - BRK-B   # Berkshire Hathaway B
+  - V       # Visa
+  - MA      # Mastercard
+  - AXP     # American Express
+  - WFC     # Wells Fargo
+  - JPM     # JPMorgan Chase
+  - BAC     # Bank of America
+  - USB     # U.S. Bancorp
+  - TRV     # Travelers Companies
+  - CB      # Chubb Limited
+  - AFL     # Aflac
+  - PGR     # Progressive Corp
+
+# ── Industriales defensivos ───────────────────────────────
+industrials:
+  - MMM     # 3M
+  - HON     # Honeywell
+  - EMR     # Emerson Electric
+  - ITW     # Illinois Tool Works
+  - DOV     # Dover Corporation
+  - GWW     # W.W. Grainger
+  - PH      # Parker Hannifin
+  - ROK     # Rockwell Automation
+  - CTAS    # Cintas Corporation
+  - WM      # Waste Management
+  - RSG     # Republic Services
+  - FAST    # Fastenal
+
+# ── ETFs defensivos ───────────────────────────────────────
+# Muy diversificados — buena reversión a la media por construcción
+etfs:
+  - SPY     # S&P 500
+  - QQQ     # Nasdaq 100
+  - IWM     # Russell 2000
+  - GLD     # Oro
+  - TLT     # Bonos largo plazo
+  - IEF     # Bonos medio plazo
+  - VYM     # High Dividend Yield
+  - SCHD    # Dividend Equity
+  - XLP     # Consumer Staples ETF
+  - XLU     # Utilities ETF
+  - XLV     # Health Care ETF
+  - XLF     # Financials ETF
+  - XLI     # Industrials ETF
+  - VNQ     # Real Estate ETF
+  - DIA     # Dow Jones ETF
+
+# ── Tecnología moderada ───────────────────────────────────
+# Más volátil — el sistema puede funcionar en las menos extremas
+tech_moderate:
+  - AAPL    # Apple
+  - MSFT    # Microsoft
+  - GOOGL   # Alphabet A
+  - META    # Meta
+  - CSCO    # Cisco
+  - IBM     # IBM
+  - INTC    # Intel
+  - TXN     # Texas Instruments
+  - ADI     # Analog Devices
+  - QCOM    # Qualcomm
+  - ACN     # Accenture
+
+# ── Alta volatilidad (para referencia comparativa) ────────
+# El sistema probablemente NO funcionará aquí — útil para validar el screener
+high_volatility:
+  - TSLA    # Tesla
+  - NVDA    # NVIDIA
+  - AMD     # Advanced Micro Devices
+  - SHOP    # Shopify
+  - COIN    # Coinbase
+  - BTC-USD # Bitcoin
+  - ETH-USD # Ethereum
