@@ -1,0 +1,601 @@
+=================================================================
+  LONQ — ASSET SCREENER
+  Modo: RÁPIDO (estadístico)
+=================================================================
+
+  Universo: 113 tickers  |  9 sectores
+  Período:  desde 2018-01-01
+  Hilos:    4
+
+  Iniciando screening...
+
+  [  1/113]  KO         ✓   58/100  (0s)
+  [  2/113]  CL         ✓   56/100  (2s)
+  [  3/113]  PEP        ✓   56/100  (2s)
+  [  4/113]  KMB        ✓   56/100  (2s)
+  [  5/113]  PG         ✓   56/100  (2s)
+  [  6/113]  K          ✗  ERROR  (2s)
+  [  7/113]  GIS        ✗  ERROR  (2s)
+  [  8/113]  CPB        ✗  ERROR  (2s)
+  [  9/113]  HSY        ✓✓  71/100  (3s)
+  [ 10/113]  CAG        ✓✓  71/100  (3s)
+  [ 11/113]  MKC        ✓✓  71/100  (3s)
+  [ 12/113]  SJM        ✓✓  71/100  (3s)
+  [ 13/113]  MO         ✓   63/100  (3s)
+  [ 14/113]  PM         ✓   63/100  (3s)
+  [ 15/113]  BTI        ✓   63/100  (3s)
+  [ 16/113]  NEE        ✓   63/100  (3s)
+HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: K"}}}
+$K: possibly delisted; no timezone found
+  [ 17/113]  SO         ✓✓  71/100  (3s)
+  [ 18/113]  DUK        ✓✓  71/100  (3s)
+  [ 19/113]  AEP        ✓✓  71/100  (3s)
+  [ 20/113]  D          ✓✓  71/100  (3s)
+  [ 21/113]  PEG        ✓✓  71/100  (3s)
+  [ 22/113]  XEL        ✓✓  71/100  (3s)
+  [ 23/113]  SRE        ✓✓  71/100  (3s)
+  [ 24/113]  EXC        ✓✓  71/100  (3s)
+  [ 25/113]  PPL        ✓   63/100  (4s)
+  [ 26/113]  ETR        ✓   63/100  (4s)
+  [ 27/113]  ES         ✓   63/100  (4s)
+  [ 28/113]  WEC        ✓   63/100  (4s)
+  [ 29/113]  FE         ✓   56/100  (4s)
+  [ 30/113]  ABT        ✓   56/100  (4s)
+  [ 31/113]  JNJ        ✓   56/100  (4s)
+  [ 32/113]  AES        ✓   56/100  (4s)
+  [ 33/113]  MRK        ✓   63/100  (4s)
+  [ 34/113]  PFE        ✓   63/100  (4s)
+  [ 35/113]  ABBV       ✓   63/100  (4s)
+  [ 36/113]  MDT        ✓   63/100  (4s)
+  [ 37/113]  BMY        ✓   63/100  (4s)
+  [ 38/113]  BDX        ✓   55/100  (4s)
+  [ 39/113]  BSX        ✓   55/100  (4s)
+  [ 40/113]  ZTS        ✓   55/100  (4s)
+  [ 41/113]  AMGN       ✓   55/100  (4s)
+  [ 42/113]  O          ~   35/100  (4s)
+  [ 43/113]  CI         ~   35/100  (4s)
+  [ 44/113]  ELV        ~   35/100  (4s)
+  [ 45/113]  SPG        ~   35/100  (4s)
+  [ 46/113]  PLD        ~   35/100  (5s)
+  [ 47/113]  AMT        ~   35/100  (5s)
+  [ 48/113]  CCI        ~   35/100  (5s)
+  [ 49/113]  VICI       ~   35/100  (5s)
+  [ 50/113]  STAG       ✓   56/100  (5s)
+  [ 51/113]  NNN        ✓   55/100  (5s)
+  [ 52/113]  EQR        ~   40/100  (5s)
+  [ 53/113]  COLD       ~   40/100  (5s)
+  [ 54/113]  AVB        ~   40/100  (5s)
+  [ 55/113]  WPC        ~   40/100  (5s)
+  [ 56/113]  BRK-B      ~   40/100  (5s)
+  [ 57/113]  MAA        ~   40/100  (5s)
+  [ 58/113]  MA         ~   40/100  (5s)
+  [ 59/113]  V          ~   40/100  (5s)
+  [ 60/113]  JPM        ✓   63/100  (5s)
+  [ 61/113]  WFC        ✓   63/100  (5s)
+  [ 62/113]  AXP        ✓   63/100  (5s)
+  [ 63/113]  BAC        ✓   63/100  (5s)
+  [ 64/113]  AFL        ~   43/100  (5s)
+  [ 65/113]  CB         ~   43/100  (5s)
+  [ 66/113]  TRV        ~   43/100  (5s)
+  [ 67/113]  USB        ~   43/100  (5s)
+  [ 68/113]  PGR        ~   48/100  (6s)
+  [ 69/113]  HON        ~   48/100  (6s)
+  [ 70/113]  EMR        ~   48/100  (6s)
+  [ 71/113]  MMM        ~   48/100  (6s)
+  [ 72/113]  ITW        ✓   63/100  (6s)
+  [ 73/113]  GWW        ✓   63/100  (6s)
+  [ 74/113]  DOV        ✓   63/100  (6s)
+  [ 75/113]  PH         ✓   63/100  (6s)
+  [ 76/113]  WM         ~   40/100  (6s)
+  [ 77/113]  CTAS       ~   40/100  (6s)
+  [ 78/113]  RSG        ~   40/100  (6s)
+  [ 79/113]  ROK        ~   40/100  (6s)
+  [ 80/113]  FAST       ✓   55/100  (6s)
+  [ 81/113]  IWM        ✓   55/100  (6s)
+  [ 82/113]  SPY        ~   35/100  (6s)
+  [ 83/113]  QQQ        ✓   55/100  (6s)
+  [ 84/113]  VYM        ~   47/100  (6s)
+  [ 85/113]  GLD        ~   47/100  (6s)
+  [ 86/113]  IEF        ~   47/100  (6s)
+  [ 87/113]  TLT        ~   47/100  (6s)
+  [ 88/113]  SCHD       ✓   58/100  (6s)
+  [ 89/113]  XLU        ✓   58/100  (6s)
+  [ 90/113]  XLV        ✓   58/100  (6s)
+  [ 91/113]  XLP        ✓   58/100  (6s)
+  [ 92/113]  DIA        ✓   56/100  (7s)
+  [ 93/113]  XLF        ✓   56/100  (7s)
+  [ 94/113]  XLI        ✓   56/100  (7s)
+  [ 95/113]  VNQ        ✓   56/100  (7s)
+  [ 96/113]  MSFT       ✓   56/100  (7s)
+  [ 97/113]  META       ✓   56/100  (7s)
+  [ 98/113]  GOOGL      ✓   56/100  (7s)
+  [ 99/113]  AAPL       ✓   56/100  (7s)
+  [100/113]  CSCO       ✓   63/100  (7s)
+  [101/113]  INTC       ✓   63/100  (7s)
+  [102/113]  IBM        ✓   63/100  (7s)
+  [103/113]  TXN        ✓   63/100  (7s)
+  [104/113]  TSLA       ~   46/100  (7s)
+  [105/113]  ACN        ✓✓  71/100  (7s)
+  [106/113]  QCOM       ✓✓  71/100  (7s)
+  [107/113]  ADI        ✓✓  71/100  (7s)
+  [108/113]  NVDA       ✓✓  71/100  (7s)
+  [109/113]  BTC-USD    ✓   50/100  (7s)
+  [110/113]  ETH-USD    ✓   56/100  (7s)
+  [111/113]  COIN       ✓   56/100  (7s)
+  [112/113]  AMD        ✓   56/100  (7s)
+  [113/113]  SHOP       ✓   56/100  (7s)
+
+═════════════════════════════════════════════════════════════════
+  RESULTADOS — 110 tickers analizados en 7s
+═════════════════════════════════════════════════════════════════
+
+  Distribución:
+  ✓✓ Excelente:   16 tickers
+  ✓  Bueno:       60 tickers
+  ~  Marginal:    34 tickers
+  ✗  No apto:      0 tickers
+
+─────────────────────────────────────────────────────────────────
+  RANKING
+─────────────────────────────────────────────────────────────────
+
+  ✓✓ HSY       score  71/100  — Excelente candidato (rápido) — aplicar análisis completo
+     Vol=26.3%  Autocorr5d=-0.009  Tendencia R²=0.03  Días=2079
+
+  ✓✓ CAG       score  71/100  — Excelente candidato (rápido) — aplicar análisis completo
+     Vol=26.3%  Autocorr5d=-0.009  Tendencia R²=0.03  Días=2079
+
+  ✓✓ MKC       score  71/100  — Excelente candidato (rápido) — aplicar análisis completo
+     Vol=26.3%  Autocorr5d=-0.009  Tendencia R²=0.03  Días=2079
+
+  ✓✓ SJM       score  71/100  — Excelente candidato (rápido) — aplicar análisis completo
+     Vol=26.3%  Autocorr5d=-0.009  Tendencia R²=0.03  Días=2079
+
+  ✓✓ SO        score  71/100  — Excelente candidato (rápido) — aplicar análisis completo
+     Vol=25.1%  Autocorr5d=+0.001  Tendencia R²=0.34  Días=2079
+
+  ✓✓ DUK       score  71/100  — Excelente candidato (rápido) — aplicar análisis completo
+     Vol=25.1%  Autocorr5d=+0.001  Tendencia R²=0.34  Días=2079
+
+  ✓✓ AEP       score  71/100  — Excelente candidato (rápido) — aplicar análisis completo
+     Vol=25.1%  Autocorr5d=+0.001  Tendencia R²=0.34  Días=2079
+
+  ✓✓ D         score  71/100  — Excelente candidato (rápido) — aplicar análisis completo
+     Vol=25.1%  Autocorr5d=+0.001  Tendencia R²=0.34  Días=2079
+
+  ✓✓ PEG       score  71/100  — Excelente candidato (rápido) — aplicar análisis completo
+     Vol=27.5%  Autocorr5d=+0.008  Tendencia R²=0.03  Días=2079
+
+  ✓✓ XEL       score  71/100  — Excelente candidato (rápido) — aplicar análisis completo
+     Vol=27.5%  Autocorr5d=+0.008  Tendencia R²=0.03  Días=2079
+
+  ✓✓ SRE       score  71/100  — Excelente candidato (rápido) — aplicar análisis completo
+     Vol=27.5%  Autocorr5d=+0.008  Tendencia R²=0.03  Días=2079
+
+  ✓✓ EXC       score  71/100  — Excelente candidato (rápido) — aplicar análisis completo
+     Vol=27.5%  Autocorr5d=+0.008  Tendencia R²=0.03  Días=2079
+
+  ✓✓ ACN       score  71/100  — Excelente candidato (rápido) — aplicar análisis completo
+     Vol=25.4%  Autocorr5d=+0.014  Tendencia R²=0.01  Días=2079
+
+  ✓✓ QCOM      score  71/100  — Excelente candidato (rápido) — aplicar análisis completo
+     Vol=25.4%  Autocorr5d=+0.014  Tendencia R²=0.01  Días=2079
+
+  ✓✓ ADI       score  71/100  — Excelente candidato (rápido) — aplicar análisis completo
+     Vol=25.4%  Autocorr5d=+0.014  Tendencia R²=0.01  Días=2079
+
+  ✓✓ NVDA      score  71/100  — Excelente candidato (rápido) — aplicar análisis completo
+     Vol=25.4%  Autocorr5d=+0.014  Tendencia R²=0.01  Días=2079
+
+  ✓  MO        score  63/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=23.8%  Autocorr5d=+0.029  Tendencia R²=0.68  Días=2079
+
+  ✓  PM        score  63/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=23.8%  Autocorr5d=+0.029  Tendencia R²=0.68  Días=2079
+
+  ✓  BTI       score  63/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=23.8%  Autocorr5d=+0.029  Tendencia R²=0.68  Días=2079
+
+  ✓  NEE       score  63/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=23.8%  Autocorr5d=+0.029  Tendencia R²=0.68  Días=2079
+
+  ✓  PPL       score  63/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=25.4%  Autocorr5d=+0.088  Tendencia R²=0.11  Días=2079
+
+  ✓  ETR       score  63/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=25.4%  Autocorr5d=+0.088  Tendencia R²=0.11  Días=2079
+
+  ✓  ES        score  63/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=25.4%  Autocorr5d=+0.088  Tendencia R²=0.11  Días=2079
+
+  ✓  WEC       score  63/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=25.4%  Autocorr5d=+0.088  Tendencia R²=0.11  Días=2079
+
+  ✓  MRK       score  63/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=24.0%  Autocorr5d=+0.007  Tendencia R²=0.61  Días=2079
+
+  ✓  PFE       score  63/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=24.9%  Autocorr5d=+0.044  Tendencia R²=0.45  Días=2079
+
+  ✓  ABBV      score  63/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=24.9%  Autocorr5d=+0.044  Tendencia R²=0.45  Días=2079
+
+  ✓  MDT       score  63/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=24.9%  Autocorr5d=+0.044  Tendencia R²=0.45  Días=2079
+
+  ✓  BMY       score  63/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=24.9%  Autocorr5d=+0.044  Tendencia R²=0.45  Días=2079
+
+  ✓  JPM       score  63/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=22.9%  Autocorr5d=+0.028  Tendencia R²=0.66  Días=2079
+
+  ✓  WFC       score  63/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=22.9%  Autocorr5d=+0.028  Tendencia R²=0.66  Días=2079
+
+  ✓  AXP       score  63/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=22.9%  Autocorr5d=+0.028  Tendencia R²=0.66  Días=2079
+
+  ✓  BAC       score  63/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=22.9%  Autocorr5d=+0.028  Tendencia R²=0.66  Días=2079
+
+  ✓  ITW       score  63/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=25.9%  Autocorr5d=+0.041  Tendencia R²=0.08  Días=2079
+
+  ✓  GWW       score  63/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=25.9%  Autocorr5d=+0.041  Tendencia R²=0.08  Días=2079
+
+  ✓  DOV       score  63/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=25.9%  Autocorr5d=+0.041  Tendencia R²=0.08  Días=2079
+
+  ✓  PH        score  63/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=25.9%  Autocorr5d=+0.041  Tendencia R²=0.08  Días=2079
+
+  ✓  CSCO      score  63/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=24.2%  Autocorr5d=+0.051  Tendencia R²=0.04  Días=2079
+
+  ✓  INTC      score  63/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=24.2%  Autocorr5d=+0.051  Tendencia R²=0.04  Días=2079
+
+  ✓  IBM       score  63/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=24.2%  Autocorr5d=+0.051  Tendencia R²=0.04  Días=2079
+
+  ✓  TXN       score  63/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=24.2%  Autocorr5d=+0.051  Tendencia R²=0.04  Días=2079
+
+  ✓  KO        score  58/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=24.1%  Autocorr5d=-0.028  Tendencia R²=0.85  Días=1302
+
+  ✓  SCHD      score  58/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=38.5%  Autocorr5d=+0.016  Tendencia R²=0.07  Días=2079
+
+  ✓  XLU       score  58/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=38.5%  Autocorr5d=+0.016  Tendencia R²=0.07  Días=2079
+
+  ✓  XLV       score  58/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=38.5%  Autocorr5d=+0.016  Tendencia R²=0.07  Días=2079
+
+  ✓  XLP       score  58/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=38.5%  Autocorr5d=+0.016  Tendencia R²=0.07  Días=2079
+
+  ✓  CL        score  56/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=20.4%  Autocorr5d=+0.027  Tendencia R²=0.79  Días=2079
+
+  ✓  PEP       score  56/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=20.4%  Autocorr5d=+0.027  Tendencia R²=0.79  Días=2079
+
+  ✓  KMB       score  56/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=20.4%  Autocorr5d=+0.027  Tendencia R²=0.79  Días=2079
+
+  ✓  PG        score  56/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=20.4%  Autocorr5d=+0.027  Tendencia R²=0.79  Días=2079
+
+  ✓  FE        score  56/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=25.8%  Autocorr5d=+0.026  Tendencia R²=0.82  Días=2079
+
+  ✓  ABT       score  56/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=25.8%  Autocorr5d=+0.026  Tendencia R²=0.82  Días=2079
+
+  ✓  JNJ       score  56/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=25.8%  Autocorr5d=+0.026  Tendencia R²=0.82  Días=2079
+
+  ✓  AES       score  56/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=25.8%  Autocorr5d=+0.026  Tendencia R²=0.82  Días=2079
+
+  ✓  STAG      score  56/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=22.1%  Autocorr5d=+0.010  Tendencia R²=0.78  Días=2079
+
+  ✓  DIA       score  56/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=19.5%  Autocorr5d=+0.020  Tendencia R²=0.75  Días=2079
+
+  ✓  XLF       score  56/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=19.5%  Autocorr5d=+0.020  Tendencia R²=0.75  Días=2079
+
+  ✓  XLI       score  56/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=19.5%  Autocorr5d=+0.020  Tendencia R²=0.75  Días=2079
+
+  ✓  VNQ       score  56/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=19.5%  Autocorr5d=+0.020  Tendencia R²=0.75  Días=2079
+
+  ✓  MSFT      score  56/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=24.6%  Autocorr5d=+0.000  Tendencia R²=0.72  Días=2079
+
+  ✓  META      score  56/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=24.6%  Autocorr5d=+0.000  Tendencia R²=0.72  Días=2079
+
+  ✓  GOOGL     score  56/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=24.6%  Autocorr5d=+0.000  Tendencia R²=0.72  Días=2079
+
+  ✓  AAPL      score  56/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=24.6%  Autocorr5d=+0.000  Tendencia R²=0.72  Días=2079
+
+  ✓  ETH-USD   score  56/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=23.5%  Autocorr5d=+0.022  Tendencia R²=0.74  Días=2079
+
+  ✓  COIN      score  56/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=23.5%  Autocorr5d=+0.022  Tendencia R²=0.74  Días=2079
+
+  ✓  AMD       score  56/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=23.5%  Autocorr5d=+0.022  Tendencia R²=0.74  Días=2079
+
+  ✓  SHOP      score  56/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=23.5%  Autocorr5d=+0.022  Tendencia R²=0.74  Días=2079
+
+  ✓  BDX       score  55/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=27.0%  Autocorr5d=+0.074  Tendencia R²=0.64  Días=2079
+
+  ✓  BSX       score  55/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=27.0%  Autocorr5d=+0.074  Tendencia R²=0.64  Días=2079
+
+  ✓  ZTS       score  55/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=27.0%  Autocorr5d=+0.074  Tendencia R²=0.64  Días=2079
+
+  ✓  AMGN      score  55/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=27.0%  Autocorr5d=+0.074  Tendencia R²=0.64  Días=2079
+
+  ✓  NNN       score  55/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=25.0%  Autocorr5d=+0.062  Tendencia R²=0.02  Días=2079
+
+  ✓  FAST      score  55/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=24.1%  Autocorr5d=-0.003  Tendencia R²=0.67  Días=2079
+
+  ✓  IWM       score  55/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=24.1%  Autocorr5d=-0.003  Tendencia R²=0.67  Días=2079
+
+  ✓  QQQ       score  55/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=24.1%  Autocorr5d=-0.003  Tendencia R²=0.67  Días=2079
+
+  ✓  BTC-USD   score  50/100  — Buen candidato (rápido) — vale la pena analizar
+     Vol=52.3%  Autocorr5d=-0.003  Tendencia R²=0.63  Días=2192
+
+  ~  PGR       score  48/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=22.9%  Autocorr5d=+0.002  Tendencia R²=0.72  Días=2079
+
+  ~  HON       score  48/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=22.9%  Autocorr5d=+0.002  Tendencia R²=0.72  Días=2079
+
+  ~  EMR       score  48/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=22.9%  Autocorr5d=+0.002  Tendencia R²=0.72  Días=2079
+
+  ~  MMM       score  48/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=22.9%  Autocorr5d=+0.002  Tendencia R²=0.72  Días=2079
+
+  ~  VYM       score  47/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=26.2%  Autocorr5d=+0.088  Tendencia R²=0.58  Días=2079
+
+  ~  GLD       score  47/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=26.2%  Autocorr5d=+0.088  Tendencia R²=0.58  Días=2079
+
+  ~  IEF       score  47/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=26.2%  Autocorr5d=+0.088  Tendencia R²=0.58  Días=2079
+
+  ~  TLT       score  47/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=26.2%  Autocorr5d=+0.088  Tendencia R²=0.58  Días=2079
+
+  ~  TSLA      score  46/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=66.4%  Autocorr5d=-0.024  Tendencia R²=0.39  Días=1508
+
+  ~  AFL       score  43/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=23.0%  Autocorr5d=+0.065  Tendencia R²=0.86  Días=2079
+
+  ~  CB        score  43/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=23.0%  Autocorr5d=+0.065  Tendencia R²=0.86  Días=2079
+
+  ~  TRV       score  43/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=23.0%  Autocorr5d=+0.065  Tendencia R²=0.86  Días=2079
+
+  ~  USB       score  43/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=23.0%  Autocorr5d=+0.065  Tendencia R²=0.86  Días=2079
+
+  ~  EQR       score  40/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=25.0%  Autocorr5d=+0.122  Tendencia R²=0.78  Días=2079
+
+  ~  COLD      score  40/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=25.0%  Autocorr5d=+0.122  Tendencia R²=0.78  Días=2079
+
+  ~  AVB       score  40/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=25.0%  Autocorr5d=+0.122  Tendencia R²=0.78  Días=2079
+
+  ~  WPC       score  40/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=25.0%  Autocorr5d=+0.122  Tendencia R²=0.78  Días=2079
+
+  ~  BRK-B     score  40/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=26.6%  Autocorr5d=+0.057  Tendencia R²=0.84  Días=2079
+
+  ~  MAA       score  40/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=26.6%  Autocorr5d=+0.057  Tendencia R²=0.84  Días=2079
+
+  ~  MA        score  40/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=26.6%  Autocorr5d=+0.057  Tendencia R²=0.84  Días=2079
+
+  ~  V         score  40/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=26.6%  Autocorr5d=+0.057  Tendencia R²=0.84  Días=2079
+
+  ~  WM        score  40/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=25.5%  Autocorr5d=+0.055  Tendencia R²=0.77  Días=2079
+
+  ~  CTAS      score  40/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=25.5%  Autocorr5d=+0.055  Tendencia R²=0.77  Días=2079
+
+  ~  RSG       score  40/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=25.5%  Autocorr5d=+0.055  Tendencia R²=0.77  Días=2079
+
+  ~  ROK       score  40/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=25.5%  Autocorr5d=+0.055  Tendencia R²=0.77  Días=2079
+
+  ~  O         score  35/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=21.5%  Autocorr5d=+0.066  Tendencia R²=0.88  Días=2079
+
+  ~  CI        score  35/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=21.5%  Autocorr5d=+0.066  Tendencia R²=0.88  Días=2079
+
+  ~  ELV       score  35/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=21.5%  Autocorr5d=+0.066  Tendencia R²=0.88  Días=2079
+
+  ~  SPG       score  35/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=21.5%  Autocorr5d=+0.066  Tendencia R²=0.88  Días=2079
+
+  ~  PLD       score  35/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=23.1%  Autocorr5d=+0.054  Tendencia R²=0.94  Días=2079
+
+  ~  AMT       score  35/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=23.1%  Autocorr5d=+0.054  Tendencia R²=0.94  Días=2079
+
+  ~  CCI       score  35/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=23.1%  Autocorr5d=+0.054  Tendencia R²=0.94  Días=2079
+
+  ~  VICI      score  35/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=23.1%  Autocorr5d=+0.054  Tendencia R²=0.94  Días=2079
+
+  ~  SPY       score  35/100  — Candidato marginal (rápido) — usar con precaución
+     Vol=20.8%  Autocorr5d=+0.063  Tendencia R²=0.85  Días=1507
+
+─────────────────────────────────────────────────────────────────
+  TABLA RESUMEN
+─────────────────────────────────────────────────────────────────
+ Ticker  Score Grado Vol. anual Autocorr 5d Tendencia R²
+    HSY     71    ✓✓      26.3%      -0.009         0.03
+    CAG     71    ✓✓      26.3%      -0.009         0.03
+    MKC     71    ✓✓      26.3%      -0.009         0.03
+    SJM     71    ✓✓      26.3%      -0.009         0.03
+     SO     71    ✓✓      25.1%      +0.001         0.34
+    DUK     71    ✓✓      25.1%      +0.001         0.34
+    AEP     71    ✓✓      25.1%      +0.001         0.34
+      D     71    ✓✓      25.1%      +0.001         0.34
+    PEG     71    ✓✓      27.5%      +0.008         0.03
+    XEL     71    ✓✓      27.5%      +0.008         0.03
+    SRE     71    ✓✓      27.5%      +0.008         0.03
+    EXC     71    ✓✓      27.5%      +0.008         0.03
+    ACN     71    ✓✓      25.4%      +0.014         0.01
+   QCOM     71    ✓✓      25.4%      +0.014         0.01
+    ADI     71    ✓✓      25.4%      +0.014         0.01
+   NVDA     71    ✓✓      25.4%      +0.014         0.01
+     MO     63    ✓       23.8%      +0.029         0.68
+     PM     63    ✓       23.8%      +0.029         0.68
+    BTI     63    ✓       23.8%      +0.029         0.68
+    NEE     63    ✓       23.8%      +0.029         0.68
+    PPL     63    ✓       25.4%      +0.088         0.11
+    ETR     63    ✓       25.4%      +0.088         0.11
+     ES     63    ✓       25.4%      +0.088         0.11
+    WEC     63    ✓       25.4%      +0.088         0.11
+    MRK     63    ✓       24.0%      +0.007         0.61
+    PFE     63    ✓       24.9%      +0.044         0.45
+   ABBV     63    ✓       24.9%      +0.044         0.45
+    MDT     63    ✓       24.9%      +0.044         0.45
+    BMY     63    ✓       24.9%      +0.044         0.45
+    JPM     63    ✓       22.9%      +0.028         0.66
+    WFC     63    ✓       22.9%      +0.028         0.66
+    AXP     63    ✓       22.9%      +0.028         0.66
+    BAC     63    ✓       22.9%      +0.028         0.66
+    ITW     63    ✓       25.9%      +0.041         0.08
+    GWW     63    ✓       25.9%      +0.041         0.08
+    DOV     63    ✓       25.9%      +0.041         0.08
+     PH     63    ✓       25.9%      +0.041         0.08
+   CSCO     63    ✓       24.2%      +0.051         0.04
+   INTC     63    ✓       24.2%      +0.051         0.04
+    IBM     63    ✓       24.2%      +0.051         0.04
+    TXN     63    ✓       24.2%      +0.051         0.04
+     KO     58    ✓       24.1%      -0.028         0.85
+   SCHD     58    ✓       38.5%      +0.016         0.07
+    XLU     58    ✓       38.5%      +0.016         0.07
+    XLV     58    ✓       38.5%      +0.016         0.07
+    XLP     58    ✓       38.5%      +0.016         0.07
+     CL     56    ✓       20.4%      +0.027         0.79
+    PEP     56    ✓       20.4%      +0.027         0.79
+    KMB     56    ✓       20.4%      +0.027         0.79
+     PG     56    ✓       20.4%      +0.027         0.79
+     FE     56    ✓       25.8%      +0.026         0.82
+    ABT     56    ✓       25.8%      +0.026         0.82
+    JNJ     56    ✓       25.8%      +0.026         0.82
+    AES     56    ✓       25.8%      +0.026         0.82
+   STAG     56    ✓       22.1%      +0.010         0.78
+    DIA     56    ✓       19.5%      +0.020         0.75
+    XLF     56    ✓       19.5%      +0.020         0.75
+    XLI     56    ✓       19.5%      +0.020         0.75
+    VNQ     56    ✓       19.5%      +0.020         0.75
+   MSFT     56    ✓       24.6%      +0.000         0.72
+   META     56    ✓       24.6%      +0.000         0.72
+  GOOGL     56    ✓       24.6%      +0.000         0.72
+   AAPL     56    ✓       24.6%      +0.000         0.72
+ETH-USD     56    ✓       23.5%      +0.022         0.74
+   COIN     56    ✓       23.5%      +0.022         0.74
+    AMD     56    ✓       23.5%      +0.022         0.74
+   SHOP     56    ✓       23.5%      +0.022         0.74
+    BDX     55    ✓       27.0%      +0.074         0.64
+    BSX     55    ✓       27.0%      +0.074         0.64
+    ZTS     55    ✓       27.0%      +0.074         0.64
+   AMGN     55    ✓       27.0%      +0.074         0.64
+    NNN     55    ✓       25.0%      +0.062         0.02
+   FAST     55    ✓       24.1%      -0.003         0.67
+    IWM     55    ✓       24.1%      -0.003         0.67
+    QQQ     55    ✓       24.1%      -0.003         0.67
+BTC-USD     50    ✓       52.3%      -0.003         0.63
+    PGR     48    ~       22.9%      +0.002         0.72
+    HON     48    ~       22.9%      +0.002         0.72
+    EMR     48    ~       22.9%      +0.002         0.72
+    MMM     48    ~       22.9%      +0.002         0.72
+    VYM     47    ~       26.2%      +0.088         0.58
+    GLD     47    ~       26.2%      +0.088         0.58
+    IEF     47    ~       26.2%      +0.088         0.58
+    TLT     47    ~       26.2%      +0.088         0.58
+   TSLA     46    ~       66.4%      -0.024         0.39
+    AFL     43    ~       23.0%      +0.065         0.86
+     CB     43    ~       23.0%      +0.065         0.86
+    TRV     43    ~       23.0%      +0.065         0.86
+    USB     43    ~       23.0%      +0.065         0.86
+    EQR     40    ~       25.0%      +0.122         0.78
+   COLD     40    ~       25.0%      +0.122         0.78
+    AVB     40    ~       25.0%      +0.122         0.78
+    WPC     40    ~       25.0%      +0.122         0.78
+  BRK-B     40    ~       26.6%      +0.057         0.84
+    MAA     40    ~       26.6%      +0.057         0.84
+     MA     40    ~       26.6%      +0.057         0.84
+      V     40    ~       26.6%      +0.057         0.84
+     WM     40    ~       25.5%      +0.055         0.77
+   CTAS     40    ~       25.5%      +0.055         0.77
+    RSG     40    ~       25.5%      +0.055         0.77
+    ROK     40    ~       25.5%      +0.055         0.77
+      O     35    ~       21.5%      +0.066         0.88
+     CI     35    ~       21.5%      +0.066         0.88
+    ELV     35    ~       21.5%      +0.066         0.88
+    SPG     35    ~       21.5%      +0.066         0.88
+    PLD     35    ~       23.1%      +0.054         0.94
+    AMT     35    ~       23.1%      +0.054         0.94
+    CCI     35    ~       23.1%      +0.054         0.94
+   VICI     35    ~       23.1%      +0.054         0.94
+    SPY     35    ~       20.8%      +0.063         0.85
+
+  ★ TOP CANDIDATOS PARA ANÁLISIS COMPLETO:
+   1. HSY       score 71/100  ✓✓
+   2. CAG       score 71/100  ✓✓
+   3. MKC       score 71/100  ✓✓
+   4. SJM       score 71/100  ✓✓
+   5. SO        score 71/100  ✓✓
+   6. DUK       score 71/100  ✓✓
+   7. AEP       score 71/100  ✓✓
+   8. D         score 71/100  ✓✓
+   9. PEG       score 71/100  ✓✓
+  10. XEL       score 71/100  ✓✓
+
+  💾 Resultados guardados: results/screen_2026-04-13.csv
+
+  ⚠  Tickers con error: K, GIS, CPB
