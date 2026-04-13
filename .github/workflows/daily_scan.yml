@@ -187,13 +187,13 @@ jobs:
             echo "Resultados commiteados y pusheados."
           fi
 
-      # ── 9. Notificación a Discord ─────────────────────────────────────────────
-      - name: Notify Discord
-        if: always()   # notifica también si el screener falla
+      # ── 9. Dashboards a Discord ────────────────────────────────────────────────
+      - name: Send dashboards to Discord
+        if: always()
         run: |
           python - <<'EOF'
-          import json, subprocess, glob, os, datetime
-          import pandas as pd
+          import os, sys, glob, json, subprocess, datetime
+          sys.path.insert(0, ".")
 
           webhook = os.environ.get("DISCORD_WEBHOOK", "")
           if not webhook:
@@ -206,60 +206,43 @@ jobs:
           mode    = os.environ.get("MODE", "fast").upper()
           status  = os.environ.get("JOB_STATUS", "success")
 
-          # ── Leer resultados si existen ────────────────────────────────────
           csvs = sorted(glob.glob("results/screen_*.csv"), reverse=True)
 
           if csvs and status == "success":
-              df        = pd.read_csv(csvs[0]).sort_values("Score", ascending=False)
-              total     = len(df)
-              excellent = df[df["Score"] >= 70]["Ticker"].tolist()
-              good      = df[(df["Score"] >= 50) & (df["Score"] < 70)]["Ticker"].tolist()
-              marginal  = df[(df["Score"] >= 30) & (df["Score"] < 50)]["Ticker"].tolist()
-
-              # Color: verde si hay excelentes, amarillo si hay buenos, rojo si nada
-              color = 0x2ecc71 if excellent else (0xf39c12 if good else 0xe74c3c)
-
-              exc_str = ", ".join([f"`{t}`" for t in excellent]) or "—"
-              goo_str = ", ".join([f"`{t}`" for t in good[:8]])  or "—"
-              mar_str = ", ".join([f"`{t}`" for t in marginal[:6]]) or "—"
-
-              fields = [
-                  {"name": "🏆 Excelentes  ≥70",  "value": exc_str, "inline": False},
-                  {"name": "✓  Buenos      50–69", "value": goo_str, "inline": False},
-                  {"name": "~  Marginales  30–49", "value": mar_str, "inline": False},
-                  {"name": "Total analizados",     "value": str(total), "inline": True},
-                  {"name": "Modo",                 "value": mode,       "inline": True},
-              ]
-              description = f"Screening completado · [{today}]({job_url})"
-
+              from src.dashboard import send_dashboards
+              stats = send_dashboards(
+                  webhook_url=webhook,
+                  csv_path=csvs[0],
+                  run_date=today,
+                  job_url=job_url,
+                  mode=mode,
+                  min_score=50,
+                  max_tickers=10,
+                  batch_size=5,
+              )
+              if stats["errors"]:
+                  print(f"⚠ Errores: {stats['errors']}")
           else:
-              # Workflow fallido o sin CSV
-              color       = 0xe74c3c
-              fields      = [{"name": "Estado", "value": f"`{status.upper()}`", "inline": True}]
-              description = f"⚠️ El screener encontró problemas · [{today}]({job_url})"
-
-          payload = {
-              "embeds": [{
-                  "title":       "📊 LONQ — Daily Asset Scan",
-                  "description": description,
-                  "color":       color,
-                  "fields":      fields,
-                  "footer":      {
-                      "text": "LONQ · Sistema de reversión a la media · github-actions[bot]"
-                  },
-                  "timestamp":   datetime.datetime.utcnow().isoformat() + "Z",
-              }]
-          }
-
-          result = subprocess.run(
-              ["curl", "-s", "-o", "/dev/null", "-w", "%{http_code}",
-               "-X", "POST", webhook,
-               "-H", "Content-Type: application/json",
-               "-d", json.dumps(payload)],
-              capture_output=True, text=True,
-          )
-          code = result.stdout.strip()
-          print(f"Discord HTTP {code}" + (" ✓" if code == "204" else " — revisa el webhook"))
+              # Workflow fallido — enviar alerta mínima
+              import pandas as pd
+              payload = {
+                  "embeds": [{
+                      "title":       "📊 LONQ — Daily Asset Scan",
+                      "description": f"⚠️ El screener encontró problemas · [{today}]({job_url})",
+                      "color":       0xe74c3c,
+                      "fields":      [{"name": "Estado", "value": f"`{status.upper()}`", "inline": True}],
+                      "footer":      {"text": "LONQ · Sistema de reversión a la media · github-actions[bot]"},
+                      "timestamp":   datetime.datetime.utcnow().isoformat() + "Z",
+                  }]
+              }
+              subprocess.run(
+                  ["curl", "-s", "-o", "/dev/null", "-w", "%{http_code}",
+                   "-X", "POST", webhook,
+                   "-H", "Content-Type: application/json",
+                   "-d", json.dumps(payload)],
+                  capture_output=True, text=True,
+              )
+              print(f"Alerta de fallo enviada a Discord")
           EOF
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
