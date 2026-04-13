@@ -3,11 +3,18 @@
 Genera embeds detallados por cada ticker seleccionado por el modelo
 y los envía al webhook de Discord en lotes.
 
+Cada dashboard incluye:
+  - Score y desglose de puntuación con barras visuales
+  - Precio actual y rango de precios (soporte/resistencia)
+  - Señal de acción: COMPRAR / VENDER / MANTENER / VIGILAR / PRECAUCIÓN
+  - Métricas profundas si están disponibles
+
 Flujo:
   1. Lee el CSV de resultados del screener
-  2. Genera un embed resumen global
-  3. Genera un embed individual por cada ticker con score ≥ 50
-  4. Envía todo al webhook de Discord en lotes de 5 embeds por mensaje
+  2. Descarga precios en vivo para los tickers seleccionados
+  3. Computa señal (z-score) y rango de precios por ticker
+  4. Genera embed resumen global + embeds individuales
+  5. Envía todo al webhook de Discord en lotes
 """
 
 from __future__ import annotations
@@ -18,6 +25,7 @@ import datetime
 import time
 from typing import Optional
 
+import numpy as np
 import pandas as pd
 
 
@@ -138,10 +146,158 @@ def _reconstruct_breakdown(row: pd.Series) -> dict:
     return bd
 
 
+# ── Señal en vivo y rango de precios ─────────────────────────────────────────
+
+ACTION_MAP = {
+    "COMPRAR":    {"emoji": "🟢", "label": "COMPRAR",    "color": 0x2ecc71},
+    "VENDER":     {"emoji": "🔴", "label": "VENDER",     "color": 0xe74c3c},
+    "MANTENER":   {"emoji": "⏸️", "label": "MANTENER",   "color": 0x3498db},
+    "VIGILAR":    {"emoji": "👀", "label": "VIGILAR",    "color": 0x9b59b6},
+    "PRECAUCIÓN": {"emoji": "⚠️", "label": "PRECAUCIÓN", "color": 0xf39c12},
+}
+
+
+def compute_signal_snapshot(ticker: str, vol_annual: float = 0.0) -> Optional[dict]:
+    """Calcula señal de acción y rango de precios a partir de datos en vivo.
+
+    Usa la misma lógica del trigger (z-score sobre retornos rodantes) para
+    determinar si el precio está en zona de anomalía.
+
+    Returns:
+        dict con: current_price, support, resistance, z_score,
+                  action, action_emoji, action_detail, target, stop_loss
+        None si no se pudieron obtener datos.
+    """
+    try:
+        import yfinance as yf
+        data = yf.download(ticker, period="1y", progress=False, auto_adjust=True)
+        if data.empty:
+            return None
+
+        # Manejar MultiIndex de yfinance
+        if isinstance(data.columns, pd.MultiIndex):
+            data.columns = [c[0] for c in data.columns]
+
+        prices = data["Close"].dropna()
+        if len(prices) < 60:
+            return None
+
+        price = float(prices.iloc[-1])
+
+        # Retornos diarios logarítmicos
+        ret = np.log(prices / prices.shift(1)).dropna()
+
+        # Estadísticas rodantes (252d = 1 año, como en trigger.py)
+        window = min(252, len(ret) - 1)
+        mu    = float(ret.rolling(window, min_periods=30).mean().iloc[-1])
+        sigma = float(ret.rolling(window, min_periods=30).std().iloc[-1])
+
+        if sigma < 1e-9:
+            return None
+
+        # Z-score del último retorno
+        z = float((ret.iloc[-1] - mu) / sigma)
+
+        # Rango de precios mensual (±2σ sobre 21 días)
+        monthly_vol = sigma * np.sqrt(21)
+        support    = round(price * np.exp(-2 * monthly_vol), 2)
+        resistance = round(price * np.exp(+2 * monthly_vol), 2)
+
+        # Probabilidades históricas de reversión (simplificado)
+        z_series = (ret - ret.rolling(window, min_periods=30).mean()) / ret.rolling(window, min_periods=30).std()
+        z_series = z_series.dropna()
+
+        # Retornos forward +5 días después de anomalías
+        fwd_5d = np.log(prices / prices.shift(-5)).dropna() * -1  # forward return
+        common = z_series.index.intersection(fwd_5d.index)
+
+        p_rev_high = p_rev_low = 0.5
+        mean_ret_high = mean_ret_low = 0.0
+
+        if len(common) > 50:
+            z_c   = z_series.loc[common]
+            fwd_c = fwd_5d.loc[common]
+
+            high_fwd = fwd_c[z_c > 2.0]
+            low_fwd  = fwd_c[z_c < -2.0]
+
+            if len(high_fwd) > 3:
+                p_rev_high    = float((high_fwd < -0.002).mean())
+                mean_ret_high = float(high_fwd.mean())
+            if len(low_fwd) > 3:
+                p_rev_low    = float((low_fwd > 0.002).mean())
+                mean_ret_low = float(low_fwd.mean())
+
+        # Determinar acción según z-score
+        if z > 2.0:
+            action = "VENDER"
+            detail = (f"Subida anómala (z={z:+.1f}σ) — "
+                      f"P(baja) histórica: {p_rev_high:.0%}")
+            target    = round(price * np.exp(mean_ret_high), 2) if mean_ret_high else None
+            stop_loss = round(price * (1 + sigma), 2)
+        elif z < -2.0:
+            action = "COMPRAR"
+            detail = (f"Caída anómala (z={z:+.1f}σ) — "
+                      f"P(sube) histórica: {p_rev_low:.0%}")
+            target    = round(price * np.exp(mean_ret_low), 2) if mean_ret_low else None
+            stop_loss = round(price * (1 - sigma), 2)
+        elif z > 1.5:
+            action = "PRECAUCIÓN"
+            detail = f"Precio cerca de resistencia (z={z:+.1f}σ)"
+            target = stop_loss = None
+        elif z < -1.5:
+            action = "VIGILAR"
+            detail = f"Precio acercándose a soporte (z={z:+.1f}σ) — preparar entrada"
+            target = stop_loss = None
+        else:
+            action = "MANTENER"
+            detail = f"Precio en rango normal (z={z:+.1f}σ)"
+            target = stop_loss = None
+
+        info = ACTION_MAP[action]
+
+        return {
+            "current_price":  price,
+            "support":        support,
+            "resistance":     resistance,
+            "support_pct":    (support / price - 1),
+            "resistance_pct": (resistance / price - 1),
+            "z_score":        z,
+            "action":         action,
+            "action_emoji":   info["emoji"],
+            "action_detail":  detail,
+            "target":         target,
+            "stop_loss":      stop_loss,
+        }
+
+    except Exception as e:
+        print(f"  ⚠ Signal snapshot {ticker}: {e}")
+        return None
+
+
+def fetch_live_signals(tickers: list[str]) -> dict[str, dict]:
+    """Descarga precios y calcula señales para una lista de tickers.
+
+    Returns:
+        dict {ticker: signal_snapshot} para los que se pudieron computar.
+    """
+    signals = {}
+    for tk in tickers:
+        snap = compute_signal_snapshot(tk)
+        if snap is not None:
+            signals[tk] = snap
+    return signals
+
+
 # ── Embed individual por ticker ──────────────────────────────────────────────
 
-def build_ticker_embed(row: pd.Series) -> dict:
-    """Genera un Discord embed detallado para un ticker."""
+def build_ticker_embed(row: pd.Series, signal: Optional[dict] = None) -> dict:
+    """Genera un Discord embed detallado para un ticker.
+
+    Args:
+        row:    Fila del CSV de resultados con métricas del screener.
+        signal: Dict de compute_signal_snapshot() con precio, rango y acción.
+    """
     ticker = row["Ticker"]
     score  = int(row["Score"])
     grade  = str(row.get("Grado", "✗ ")).strip()
@@ -181,19 +337,77 @@ def build_ticker_embed(row: pd.Series) -> dict:
         breakdown_lines.append(f"{name:<13} {bar} {pts:>2}/{max_pts}")
     breakdown_text = "```\n" + "\n".join(breakdown_lines) + "\n```"
 
+    fields = [
+        {"name": "📊 Desglose", "value": breakdown_text, "inline": False},
+    ]
+
+    # ── Precio actual + Rango de precios + Acción ──
+    if signal:
+        p  = signal["current_price"]
+        sp = signal["support"]
+        rs = signal["resistance"]
+        sp_pct = signal["support_pct"]
+        rs_pct = signal["resistance_pct"]
+        z  = signal["z_score"]
+
+        # Visualizar posición del precio dentro del rango
+        # Mapear z de [-3, +3] → posición en barra [0, 10]
+        z_clamped = max(-3, min(3, z))
+        pos = int(round((z_clamped + 3) / 6 * 10))
+        range_bar = "░" * pos + "●" + "░" * (10 - pos)
+
+        price_text = (
+            f"```\n"
+            f"💰 Precio:      ${p:,.2f}\n"
+            f"📉 Soporte:     ${sp:,.2f}  ({sp_pct:+.1%})\n"
+            f"📈 Resistencia: ${rs:,.2f}  ({rs_pct:+.1%})\n"
+            f"\n"
+            f"Soporte {range_bar} Resistencia\n"
+            f"         z-score: {z:+.2f}σ\n"
+            f"```"
+        )
+        fields.append({"name": "💰 Precio y Rango (mensual ±2σ)", "value": price_text, "inline": False})
+
+        # Acción
+        act  = signal["action"]
+        aem  = signal["action_emoji"]
+        adet = signal["action_detail"]
+
+        action_text = f"{aem} **{act}**\n{adet}"
+
+        # Target y Stop si hay señal activa
+        if signal.get("target") and signal.get("stop_loss"):
+            tgt = signal["target"]
+            stp = signal["stop_loss"]
+            tgt_pct = (tgt / p - 1)
+            stp_pct = (stp / p - 1)
+            action_text += (
+                f"\n```\n"
+                f"🎯 Target:    ${tgt:,.2f}  ({tgt_pct:+.1%})\n"
+                f"🛑 Stop Loss: ${stp:,.2f}  ({stp_pct:+.1%})\n"
+                f"```"
+            )
+
+        fields.append({"name": "🎯 Acción", "value": action_text, "inline": False})
+    else:
+        fields.append({
+            "name": "🎯 Acción",
+            "value": "⏸️ **MANTENER** — Sin datos de precio en vivo",
+            "inline": False,
+        })
+
     # ── Métricas rápidas ──
     vol = row.get("Vol. anual", "—")
     ac5 = row.get("Autocorr 5d", "—")
     tr2 = row.get("Tendencia R²", "—")
     dias = row.get("Días", "—")
 
-    fields = [
-        {"name": "📊 Desglose", "value": breakdown_text, "inline": False},
+    fields.extend([
         {"name": "Vol. anual",    "value": f"`{vol}`",  "inline": True},
         {"name": "Autocorr 5d",   "value": f"`{ac5}`",  "inline": True},
         {"name": "Tendencia R²",  "value": f"`{tr2}`",  "inline": True},
         {"name": "Histórico",     "value": f"`{dias} días`", "inline": True},
-    ]
+    ])
 
     # ── Métricas profundas (si existen) ──
     sil = _parse_float(row.get("Sil. avg"))
@@ -361,9 +575,17 @@ def send_dashboards(
         print("  — No hay tickers con score suficiente para dashboard individual")
         return stats
 
+    # Descargar precios en vivo y computar señales
+    tickers_list = selected["Ticker"].tolist()
+    print(f"  📡 Descargando precios en vivo para {len(tickers_list)} tickers...")
+    signals = fetch_live_signals(tickers_list)
+    print(f"  ✓ Señales calculadas: {len(signals)}/{len(tickers_list)}")
+
     embeds = []
     for _, row in selected.iterrows():
-        embeds.append(build_ticker_embed(row))
+        tk = row["Ticker"]
+        sig = signals.get(tk)
+        embeds.append(build_ticker_embed(row, signal=sig))
 
     print(f"  📊 {len(embeds)} dashboards generados para tickers con score ≥ {min_score}")
 
