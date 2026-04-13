@@ -43,7 +43,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: claude/continue-lonq-7VADd
+          ref: claude/resume-session-lCayI
           fetch-depth: 1
 
       # ── 2. Python ─────────────────────────────────────────────────────────────
@@ -183,7 +183,7 @@ jobs:
           else
             TODAY=$(date +%Y-%m-%d)
             git commit -m "chore: daily screen results ${TODAY} [skip ci]"
-            git push origin claude/continue-lonq-7VADd
+            git push origin claude/resume-session-lCayI
             echo "Resultados commiteados y pusheados."
           fi
 
