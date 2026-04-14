@@ -1,0 +1,49 @@
+ticker,name,mode,n_days,first_date,last_date,gaps,apto_modelo,fast_score,grade,vol_annual,autocorr5,trend_r2,error
+SAN.MC,Santander,ibex35,0,,,0,False,,,,,,sin datos
+BBVA.MC,BBVA,ibex35,0,,,0,False,,,,,,sin datos
+ITX.MC,Inditex,ibex35,0,,,0,False,,,,,,sin datos
+TEF.MC,Telefónica,ibex35,0,,,0,False,,,,,,sin datos
+IBE.MC,Iberdrola,ibex35,0,,,0,False,,,,,,sin datos
+REP.MC,Repsol,ibex35,0,,,0,False,,,,,,sin datos
+AMS.MC,Amadeus IT,ibex35,0,,,0,False,,,,,,sin datos
+CLNX.MC,Cellnex,ibex35,0,,,0,False,,,,,,sin datos
+FER.MC,Ferrovial,ibex35,0,,,0,False,,,,,,sin datos
+ACS.MC,ACS,ibex35,0,,,0,False,,,,,,sin datos
+ELE.MC,Endesa,ibex35,0,,,0,False,,,,,,sin datos
+NTGY.MC,Naturgy,ibex35,0,,,0,False,,,,,,sin datos
+ENG.MC,Enagás,ibex35,0,,,0,False,,,,,,sin datos
+MAP.MC,Mapfre,ibex35,0,,,0,False,,,,,,sin datos
+CIE.MC,CIE Automotive,ibex35,0,,,0,False,,,,,,sin datos
+VIS.MC,Viscofan,ibex35,0,,,0,False,,,,,,sin datos
+ACX.MC,Acerinox,ibex35,0,,,0,False,,,,,,sin datos
+MRL.MC,Merlin Properties,ibex35,0,,,0,False,,,,,,sin datos
+LOG.MC,Logista,ibex35,0,,,0,False,,,,,,sin datos
+CABK.MC,CaixaBank,ibex35,0,,,0,False,,,,,,sin datos
+ASML.AS,ASML,stoxx50,0,,,0,False,,,,,,sin datos
+MC.PA,LVMH,stoxx50,0,,,0,False,,,,,,sin datos
+SAP.DE,SAP,stoxx50,0,,,0,False,,,,,,sin datos
+SIE.DE,Siemens,stoxx50,0,,,0,False,,,,,,sin datos
+TTE.PA,TotalEnergies,stoxx50,0,,,0,False,,,,,,sin datos
+AIR.PA,Airbus,stoxx50,0,,,0,False,,,,,,sin datos
+OR.PA,L'Oreal,stoxx50,0,,,0,False,,,,,,sin datos
+BNP.PA,BNP Paribas,stoxx50,0,,,0,False,,,,,,sin datos
+DTE.DE,Deutsche Telekom,stoxx50,0,,,0,False,,,,,,sin datos
+ALV.DE,Allianz,stoxx50,0,,,0,False,,,,,,sin datos
+MUV2.DE,Munich Re,stoxx50,0,,,0,False,,,,,,sin datos
+BAS.DE,BASF,stoxx50,0,,,0,False,,,,,,sin datos
+IFX.DE,Infineon,stoxx50,0,,,0,False,,,,,,sin datos
+ENEL.MI,Enel,stoxx50,0,,,0,False,,,,,,sin datos
+UCG.MI,UniCredit,stoxx50,0,,,0,False,,,,,,sin datos
+PHIA.AS,Philips,stoxx50,0,,,0,False,,,,,,sin datos
+AD.AS,Ahold Delhaize,stoxx50,0,,,0,False,,,,,,sin datos
+ABI.BR,AB InBev,stoxx50,0,,,0,False,,,,,,sin datos
+SU.PA,Schneider Electric,stoxx50,0,,,0,False,,,,,,sin datos
+CS.PA,AXA,stoxx50,0,,,0,False,,,,,,sin datos
+BTC-USD,Bitcoin,crypto,0,,,0,False,,,,,,sin datos
+ETH-USD,Ethereum,crypto,0,,,0,False,,,,,,sin datos
+SOL-USD,Solana,crypto,0,,,0,False,,,,,,sin datos
+BNB-USD,BNB,crypto,0,,,0,False,,,,,,sin datos
+XRP-USD,XRP,crypto,0,,,0,False,,,,,,sin datos
+AVAX-USD,Avalanche,crypto,0,,,0,False,,,,,,sin datos
+DOGE-USD,Dogecoin,crypto,0,,,0,False,,,,,,sin datos
+ADA-USD,Cardano,crypto,0,,,0,False,,,,,,sin datos
