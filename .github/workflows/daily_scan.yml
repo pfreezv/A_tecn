@@ -16,14 +16,18 @@ on:
         options:
           - fast
           - deep
+      universe:
+        description: "Universos separados por coma (ej: custom,ibex35,stoxx50,crypto)"
+        required: false
+        default: "custom"
       sectors:
-        description: "Sectores a analizar (vacío = todos)"
+        description: "Sectores de tickers.yaml (vacío = todos, solo con universe=custom)"
         required: false
         default: ""
       top:
-        description: "Análisis profundo solo al top N (con mode=deep)"
+        description: "Deep solo al top N por fast_score (con mode=deep)"
         required: false
-        default: "20"
+        default: "40"
 
 env:
   PYTHON_VERSION: "3.11"
@@ -74,19 +78,22 @@ jobs:
           # Modo: manual dispatch o schedule
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             MODE="${{ github.event.inputs.mode }}"
+            UNIVERSE="${{ github.event.inputs.universe }}"
             SECTORS="${{ github.event.inputs.sectors }}"
             TOP="${{ github.event.inputs.top }}"
           else
-            # Cron por defecto: modo rápido, todos los sectores
+            # Cron por defecto: modo rápido, universo custom
             MODE="fast"
+            UNIVERSE="custom"
             SECTORS=""
             TOP=""
           fi
 
           # Construir flags
           FLAGS="--workers 4 --save ${{ env.RESULTS_DIR }}"
+          FLAGS="$FLAGS --universe ${UNIVERSE:-custom}"
           if [ "$MODE" = "deep" ]; then
-            FLAGS="$FLAGS --deep --top ${TOP:-20}"
+            FLAGS="$FLAGS --deep --top ${TOP:-40}"
           fi
           if [ -n "$SECTORS" ]; then
             FLAGS="$FLAGS --sectors $SECTORS"

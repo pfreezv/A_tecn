@@ -272,7 +272,7 @@ def get_crypto(use_cache: bool = True) -> list[UniverseTicker]:
     ]
 
 
-def get_custom(tickers_yaml_path: str | Path | None = None) -> list[UniverseTicker]:
+def get_custom(tickers_yaml_path: str | Path | None = None, use_cache: bool = True) -> list[UniverseTicker]:
     """Lista original de LONQ desde tickers.yaml (113 tickers curados).
 
     Todos en modo "full" (análisis completo con ensemble).
