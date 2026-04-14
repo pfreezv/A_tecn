@@ -1,6 +1,61 @@
-# LONQ — Universo de activos para screening
-# Organizados por sector y perfil de reversión esperada
-# Añade o elimina tickers libremente
+# LONQ — Configuración de universos de activos
+#
+# Estructura:
+#   universes:   activan scrapers dinámicos (Wikipedia) con caché 7 días
+#   custom:      lista original curada de 113 tickers (análisis completo)
+#
+# Universos disponibles:
+#   sp500   → ~500 tickers  | fuente: Wikipedia | modo: full
+#   ibex35  → ~35 tickers   | fuente: Wikipedia (fallback estático) | modo: full
+#   stoxx50 → ~50 tickers   | fuente: Wikipedia (fallback estático) | modo: full
+#   crypto  → 8 tickers     | lista fija | modo: trigger_only (sin ensemble)
+#
+# Modo de análisis:
+#   full          → 4 capas completas (fast + deep: ensemble + trigger + walk-forward)
+#   trigger_only  → solo capa de z-score/trigger (crypto, activos tendenciales)
+#
+# CLI:
+#   python screen_tickers.py --universe custom             (comportamiento actual)
+#   python screen_tickers.py --universe sp500,ibex35,stoxx50,crypto
+#   python screen_tickers.py --universe custom,ibex35,crypto
+
+universes:
+  sp500:
+    enabled: false            # activar cuando Fase 1 esté validada
+    source: wikipedia
+    mode: full
+    cache_ttl_days: 7
+
+  ibex35:
+    enabled: false            # activar tras validar PoC (poc_validate workflow)
+    source: wikipedia
+    mode: full
+    cache_ttl_days: 7
+
+  stoxx50:
+    enabled: false            # activar tras validar PoC
+    source: wikipedia
+    mode: full
+    cache_ttl_days: 7
+
+  crypto:
+    enabled: true             # ya testado con BTC-USD / ETH-USD en el sistema
+    source: static
+    mode: trigger_only        # NO usar ensemble — activos tendenciales
+    z_score_threshold: 2.5    # umbral más estricto que el modelo base (2.0)
+    tickers:
+      - BTC-USD   # Bitcoin
+      - ETH-USD   # Ethereum
+      - SOL-USD   # Solana
+      - BNB-USD   # BNB
+      - XRP-USD   # XRP
+      - AVAX-USD  # Avalanche
+      - DOGE-USD  # Dogecoin
+      - ADA-USD   # Cardano
+
+# ── Universo personalizado original (113 tickers curados) ─────────────────────
+# Perfil: reversión a la media, baja-media volatilidad, sectores defensivos
+# Fuente: selección manual. Modo: full (análisis completo).
 
 # ── Consumo básico (Consumer Staples) ─────────────────────
 # Alta reversión, baja volatilidad — perfil ideal para el sistema
@@ -140,11 +195,10 @@ tech_moderate:
 
 # ── Alta volatilidad (para referencia comparativa) ────────
 # El sistema probablemente NO funcionará aquí — útil para validar el screener
+# Nota: BTC-USD y ETH-USD se procesan por la sección crypto.universes (trigger_only)
 high_volatility:
   - TSLA    # Tesla
   - NVDA    # NVIDIA
   - AMD     # Advanced Micro Devices
   - SHOP    # Shopify
   - COIN    # Coinbase
-  - BTC-USD # Bitcoin
-  - ETH-USD # Ethereum
