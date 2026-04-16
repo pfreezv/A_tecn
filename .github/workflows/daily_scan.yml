@@ -216,7 +216,7 @@ jobs:
                   job_url=job_url,
                   mode=mode,
                   min_score=50,
-                  max_tickers=10,
+                  max_tickers=15,
                   batch_size=5,
               )
               if stats["errors"]:
