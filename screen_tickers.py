@@ -27,7 +27,7 @@ import yaml
 
 from src.screener import (
     fast_screen, deep_screen, print_screen_result,
-    screen_summary_df, ScreenResult,
+    screen_summary_df, ScreenResult, MIN_DAYS,
 )
 
 
@@ -96,7 +96,7 @@ def _screen_one(ticker: str, start_date: str, deep: bool, vix_series) -> ScreenR
         )
     raw, prices = result
 
-    if len(prices) < 100:
+    if len(prices) < MIN_DAYS:
         return ScreenResult(
             ticker=ticker, score=0, grade="✗ ",
             recommendation="Histórico insuficiente",
