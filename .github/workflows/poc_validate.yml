@@ -1,0 +1,165 @@
+name: LONQ PoC — Validación datos EU + Crypto
+
+on:
+  workflow_dispatch:   # solo manual — ejecución única de validación
+
+env:
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  validate:
+    name: Validate EU + Crypto data quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: claude/debug-project-issues-Ph10r
+          fetch-depth: 1
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install numpy pandas scipy scikit-learn hmmlearn yfinance pyyaml pyarrow
+
+      - name: Run PoC data validation
+        run: |
+          python poc_data_validation.py 2>&1 | tee poc_log_$(date +%Y-%m-%d).txt
+
+      - name: Upload results as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: poc-results-${{ github.run_id }}
+          path: |
+            poc_results_*.csv
+            poc_log_*.txt
+          retention-days: 30
+
+      - name: Print summary to Actions log
+        run: |
+          python - <<'EOF'
+          import glob, pandas as pd
+
+          csvs = sorted(glob.glob("poc_results_*.csv"), reverse=True)
+          if not csvs:
+              print("Sin resultados CSV.")
+              exit(0)
+
+          df = pd.read_csv(csvs[0])
+          total = len(df)
+          ok    = df["apto_modelo"].sum()
+          errs  = df["error"].notna().sum()
+
+          print(f"\n{'='*60}")
+          print(f"  RESUMEN PoC — {csvs[0]}")
+          print(f"{'='*60}")
+          print(f"  Total tickers : {total}")
+          print(f"  Aptos modelo  : {ok}  ({ok/total:.0%})")
+          print(f"  Errores       : {errs}")
+
+          for mode in df["mode"].unique():
+              sub = df[df["mode"] == mode]
+              ok_m = sub["apto_modelo"].sum()
+              scored = sub[sub["fast_score"].notna()]
+              avg = scored["fast_score"].mean() if len(scored) else 0
+              print(f"\n  [{mode}]  total={len(sub)}  aptos={ok_m}  "
+                    f"score_medio={avg:.0f}")
+              if len(scored):
+                  top5 = scored.nlargest(5, "fast_score")[
+                      ["ticker","name","fast_score","grade","vol_annual","autocorr5"]
+                  ]
+                  print(top5.to_string(index=False))
+          EOF
+
+      - name: Commit PoC results
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add poc_results_*.csv poc_log_*.txt 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "Sin resultados nuevos que commitear."
+          else
+            git commit -m "chore: poc data validation results $(date +%Y-%m-%d) [skip ci]"
+            git push origin claude/debug-project-issues-Ph10r
+          fi
+
+      - name: Send results to Discord
+        if: always()
+        run: |
+          python - <<'EOF'
+          import os, glob, json, subprocess, datetime
+          import pandas as pd
+
+          webhook = os.environ.get("DISCORD_WEBHOOK", "")
+          if not webhook:
+              print("DISCORD_WEBHOOK no configurado — saltando.")
+              exit(0)
+
+          csvs = sorted(glob.glob("poc_results_*.csv"), reverse=True)
+          if not csvs:
+              print("Sin CSV de resultados.")
+              exit(0)
+
+          df = pd.read_csv(csvs[0])
+          total = len(df)
+          ok    = int(df["apto_modelo"].sum())
+          errs  = int(df["error"].notna().sum())
+          run_url = (f"https://github.com/{os.environ.get('GITHUB_REPOSITORY','')}"
+                     f"/actions/runs/{os.environ.get('GITHUB_RUN_ID','')}")
+
+          fields = [
+              {"name": "Total tickers",    "value": str(total),                    "inline": True},
+              {"name": "Aptos para modelo","value": f"{ok} ({ok/total:.0%})",      "inline": True},
+              {"name": "Errores descarga", "value": str(errs),                     "inline": True},
+          ]
+
+          for mode in ["ibex35", "stoxx50", "crypto"]:
+              sub = df[df["mode"] == mode]
+              ok_m = int(sub["apto_modelo"].sum())
+              scored = sub[sub["fast_score"].notna()]
+              avg = scored["fast_score"].mean() if len(scored) else 0
+              top_names = ", ".join(
+                  scored.nlargest(3, "fast_score")["ticker"].tolist()
+              ) if len(scored) else "—"
+              fields.append({
+                  "name": f"[{mode.upper()}] {len(sub)} tickers",
+                  "value": (f"Aptos: **{ok_m}** · Score medio: {avg:.0f}\n"
+                            f"Top 3: `{top_names}`"),
+                  "inline": False,
+              })
+
+          payload = {
+              "embeds": [{
+                  "title":       "🔬 LONQ PoC — Validación datos EU + Crypto",
+                  "description": f"Resultados del scan de calidad · [{datetime.date.today()}]({run_url})",
+                  "color":       0x3498db,
+                  "fields":      fields,
+                  "footer":      {"text": "LONQ · claude/debug-project-issues-Ph10r"},
+                  "timestamp":   datetime.datetime.utcnow().isoformat() + "Z",
+              }]
+          }
+
+          r = subprocess.run(
+              ["curl", "-s", "-o", "/dev/null", "-w", "%{http_code}",
+               "-X", "POST", webhook,
+               "-H", "Content-Type: application/json",
+               "-d", json.dumps(payload)],
+              capture_output=True, text=True,
+          )
+          print(f"Discord: HTTP {r.stdout}")
+          EOF
+        env:
+          DISCORD_WEBHOOK:   ${{ secrets.DISCORD_WEBHOOK }}
+          GITHUB_RUN_ID:     ${{ github.run_id }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
