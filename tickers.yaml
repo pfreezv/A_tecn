@@ -147,3 +147,34 @@ high_volatility:
   - COIN    # Coinbase
   - BTC-USD # Bitcoin
   - ETH-USD # Ethereum
+  - ADA-USD # Cardano
+
+# ── IBEX 35 (España) ──────────────────────────────────────
+# Selección PoC score >= 50 — validados 2026-04-16
+ibex35:
+  - ENG.MC   # Enagás
+  - AMS.MC   # Amadeus IT
+  - IBE.MC   # Iberdrola
+  - ELE.MC   # Endesa
+  - NTGY.MC  # Naturgy
+  - VIS.MC   # Viscofan
+  - TEF.MC   # Telefónica
+  - FER.MC   # Ferrovial
+  - CLNX.MC  # Cellnex
+  - CIE.MC   # CIE Automotive
+  - ACX.MC   # Acerinox
+
+# ── Euro Stoxx 50 (Europa) ────────────────────────────────
+# Selección PoC score >= 50 — validados 2026-04-16
+stoxx50:
+  - OR.PA    # L'Oréal
+  - ENEL.MI  # Enel
+  - MC.PA    # LVMH
+  - IFX.DE   # Infineon
+  - ASML.AS  # ASML
+  - DTE.DE   # Deutsche Telekom
+  - MUV2.DE  # Munich Re
+  - AD.AS    # Ahold Delhaize
+  - BAS.DE   # BASF
+  - PHIA.AS  # Philips
+  - ABI.BR   # AB InBev
