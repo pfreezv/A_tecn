@@ -118,8 +118,8 @@ jobs:
           # Buscar CSV más reciente en results/
           csvs = sorted(glob.glob("results/screen_*.csv"), reverse=True)
           if not csvs:
-              print("No se encontró CSV de resultados.")
-              sys.exit(0)
+              print("ERROR: No se encontró CSV de resultados — el screener no generó salida.")
+              sys.exit(1)
 
           csv_path = csvs[0]
           print(f"Cargando resultados de: {csv_path}")
