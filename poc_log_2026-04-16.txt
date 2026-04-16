@@ -1,0 +1,155 @@
+
+LONQ — PoC validación de datos EU + Crypto
+Inicio: 2026-04-16 20:49:01
+Start date: 2020-01-01  |  MIN_DAYS modelo: 500  |  MAX_GAP: 7d
+
+→ Descargando IBEX 35 (20 tickers)…
+  SAN.MC       OK 1609d
+  BBVA.MC      OK 1609d
+  ITX.MC       OK 1609d
+  TEF.MC       OK 1609d
+  IBE.MC       OK 1609d
+  REP.MC       OK 1609d
+  AMS.MC       OK 1609d
+  CLNX.MC      OK 1609d
+  FER.MC       OK 1609d
+  ACS.MC       OK 1609d
+  ELE.MC       OK 1609d
+  NTGY.MC      OK 1609d
+  ENG.MC       OK 1609d
+  MAP.MC       OK 1609d
+  CIE.MC       OK 1609d
+  VIS.MC       OK 1609d
+  ACX.MC       OK 1609d
+  MRL.MC       OK 1609d
+  LOG.MC       OK 1609d
+  CABK.MC      OK 1609d
+
+========================================================================
+  IBEX 35
+========================================================================
+Ticker       Nombre                  Días      Último  Gaps  Apto  Score  Grade   Vol%     AC5     R²  Error
+--------------------------------------------------------------------------------------------------------------
+SAN.MC       Santander               1609  2026-04-16     0    SI     35     ~    36%  +0.057   0.81  
+BBVA.MC      BBVA                    1609  2026-04-16     0    SI     30     ~    37%  +0.054   0.92  
+ITX.MC       Inditex                 1609  2026-04-16     0    SI     43     ~    28%  +0.023   0.79  
+TEF.MC       Telefónica              1609  2026-04-16     0    SI     55     ✓    28%  +0.048   0.56  
+IBE.MC       Iberdrola               1609  2026-04-16     0    SI     66     ✓    22%  -0.037   0.81  
+REP.MC       Repsol                  1609  2026-04-16     0    SI     35     ~    34%  +0.136   0.72  
+AMS.MC       Amadeus IT              1609  2026-04-16     0    SI     68     ✓    34%  -0.040   0.35  
+CLNX.MC      Cellnex                 1609  2026-04-16     0    SI     50     ✓    31%  +0.007   0.62  
+FER.MC       Ferrovial               1609  2026-04-16     0    SI     51     ✓    26%  -0.008   0.86  
+ACS.MC       ACS                     1609  2026-04-16     0    SI     30     ~    34%  +0.015   0.87  
+ELE.MC       Endesa                  1609  2026-04-16     0    SI     63     ✓    23%  -0.026   0.57  
+NTGY.MC      Naturgy                 1609  2026-04-16     0    SI     63     ✓    26%  +0.005   0.70  
+ENG.MC       Enagás                  1609  2026-04-16     0    SI     71    ✓✓    23%  +0.006   0.00  
+MAP.MC       Mapfre                  1609  2026-04-16     0    SI     48     ~    27%  +0.130   0.84  
+CIE.MC       CIE Automotive          1609  2026-04-16     0    SI     50     ✓    31%  +0.011   0.67  
+VIS.MC       Viscofan                1609  2026-04-16     0    SI     63     ✓    21%  +0.014   0.67  
+ACX.MC       Acerinox                1609  2026-04-16     0    SI     50     ✓    31%  +0.003   0.67  
+MRL.MC       Merlin Properties       1609  2026-04-16     0    SI     35     ~    30%  +0.057   0.73  
+LOG.MC       Logista                 1609  2026-04-16     0    SI     43     ~    20%  +0.052   0.95  
+CABK.MC      CaixaBank               1609  2026-04-16     0    SI     30     ~    35%  +0.045   0.93  
+
+→ Descargando Euro Stoxx 50 (20 tickers)…
+  ASML.AS      OK 1611d
+  MC.PA        OK 1611d
+  SAP.DE       OK 1601d
+  SIE.DE       OK 1601d
+  TTE.PA       OK 1611d
+  AIR.PA       OK 1611d
+  OR.PA        OK 1611d
+  BNP.PA       OK 1611d
+  DTE.DE       OK 1601d
+  ALV.DE       OK 1601d
+  MUV2.DE      OK 1601d
+  BAS.DE       OK 1601d
+  IFX.DE       OK 1601d
+  ENEL.MI      OK 1599d
+  UCG.MI       OK 1599d
+  PHIA.AS      OK 1611d
+  AD.AS        OK 1611d
+  ABI.BR       OK 1611d
+  SU.PA        OK 1611d
+  CS.PA        OK 1611d
+
+========================================================================
+  Euro Stoxx 50
+========================================================================
+Ticker       Nombre                  Días      Último  Gaps  Apto  Score  Grade   Vol%     AC5     R²  Error
+--------------------------------------------------------------------------------------------------------------
+ASML.AS      ASML                    1611  2026-04-16     0    SI     57     ✓    38%  +0.007   0.69  
+MC.PA        LVMH                    1611  2026-04-16     0    SI     65     ✓    30%  +0.008   0.22  
+SAP.DE       SAP                     1601  2026-04-16     0    SI     42     ~    29%  +0.031   0.64  
+SIE.DE       Siemens                 1601  2026-04-16     0    SI     35     ~    32%  +0.061   0.84  
+TTE.PA       TotalEnergies           1611  2026-04-16     0    SI     35     ~    30%  +0.083   0.82  
+AIR.PA       Airbus                  1611  2026-04-16     0    SI     35     ~    39%  +0.021   0.78  
+OR.PA        L'Oreal                 1611  2026-04-16     0    SI     71    ✓✓    25%  +0.019   0.49  
+BNP.PA       BNP Paribas             1611  2026-04-16     0    SI     30     ~    34%  +0.069   0.86  
+DTE.DE       Deutsche Telekom        1601  2026-04-16     0    SI     51     ✓    22%  +0.020   0.94  
+ALV.DE       Allianz                 1601  2026-04-16     0    SI     43     ~    25%  +0.052   0.88  
+MUV2.DE      Munich Re               1601  2026-04-16     0    SI     51     ✓    28%  -0.030   0.92  
+BAS.DE       BASF                    1601  2026-04-16     0    SI     50     ✓    30%  +0.038   0.03  
+IFX.DE       Infineon                1601  2026-04-16     0    SI     58     ✓    41%  -0.009   0.38  
+ENEL.MI      Enel                    1599  2026-04-16     0    SI     71    ✓✓    25%  +0.000   0.34  
+UCG.MI       UniCredit               1599  2026-04-16     0    SI     30     ~    39%  +0.073   0.92  
+PHIA.AS      Philips                 1611  2026-04-16     0    SI     50     ✓    34%  +0.034   0.23  
+AD.AS        Ahold Delhaize          1611  2026-04-16     0    SI     51     ✓    20%  -0.002   0.88  
+ABI.BR       AB InBev                1611  2026-04-16     0    SI     50     ✓    30%  -0.008   0.23  
+SU.PA        Schneider Electric      1611  2026-04-16     0    SI     30     ~    30%  +0.055   0.89  
+CS.PA        AXA                     1611  2026-04-16     0    SI     43     ~    27%  +0.094   0.93  
+
+→ Descargando Crypto (8 tickers)…
+  BTC-USD      OK 2298d
+  ETH-USD      OK 2298d
+  SOL-USD      OK 2198d
+  BNB-USD      OK 2298d
+  XRP-USD      OK 2298d
+  AVAX-USD     OK 2035d
+  DOGE-USD     OK 2298d
+  ADA-USD      OK 2298d
+
+========================================================================
+  Crypto
+========================================================================
+Ticker       Nombre                  Días      Último  Gaps  Apto  Score  Grade   Vol%     AC5     R²  Error
+--------------------------------------------------------------------------------------------------------------
+BTC-USD      Bitcoin                 2298  2026-04-16     0    SI     50     ✓    51%  +0.005   0.63  
+ETH-USD      Ethereum                2298  2026-04-16     0    SI     56     ✓    69%  -0.035   0.44  
+SOL-USD      Solana                  2198  2026-04-16     0    SI     38     ~   100%  -0.020   0.52  
+BNB-USD      BNB                     2298  2026-04-16     0    SI     40     ~    69%  -0.030   0.61  
+XRP-USD      XRP                     2298  2026-04-16     0    SI     38     ~    84%  +0.007   0.52  
+AVAX-USD     Avalanche               2035  2026-04-16     1    no     46     ~    95%  +0.006   0.00  
+DOGE-USD     Dogecoin                2298  2026-04-16     0    SI     48     ~   110%  -0.051   0.43  
+ADA-USD      Cardano                 2298  2026-04-16     0    SI     56     ✓    82%  -0.031   0.10  
+
+========================================================================
+  RESUMEN GLOBAL (2026-04-16)
+========================================================================
+  Total tickers probados : 48
+  Aptos para el modelo   : 47  (98%)
+  Sin suficiente histórico: 0
+  Errores / sin datos    : 0
+
+  [ibex35]  20 tickers — 20 aptos — score medio 49
+    ENG.MC       score= 71  grade=✓✓  vol=23%  ac5=+0.006
+    AMS.MC       score= 68  grade=✓  vol=34%  ac5=-0.040
+    IBE.MC       score= 66  grade=✓  vol=22%  ac5=-0.037
+    ELE.MC       score= 63  grade=✓  vol=23%  ac5=-0.026
+    NTGY.MC      score= 63  grade=✓  vol=26%  ac5=+0.005
+
+  [stoxx50]  20 tickers — 20 aptos — score medio 47
+    OR.PA        score= 71  grade=✓✓  vol=25%  ac5=+0.019
+    ENEL.MI      score= 71  grade=✓✓  vol=25%  ac5=+0.000
+    MC.PA        score= 65  grade=✓  vol=30%  ac5=+0.008
+    IFX.DE       score= 58  grade=✓  vol=41%  ac5=-0.009
+    ASML.AS      score= 57  grade=✓  vol=38%  ac5=+0.007
+
+  [crypto]  8 tickers — 7 aptos — score medio 46
+    ETH-USD      score= 56  grade=✓  vol=69%  ac5=-0.035
+    ADA-USD      score= 56  grade=✓  vol=82%  ac5=-0.031
+    BTC-USD      score= 50  grade=✓  vol=51%  ac5=+0.005
+    DOGE-USD     score= 48  grade=~  vol=110%  ac5=-0.051
+    AVAX-USD     score= 46  grade=~  vol=95%  ac5=+0.006
+
+Resultados guardados en: /home/runner/work/A_tecn/A_tecn/poc_results_2026-04-16.csv
