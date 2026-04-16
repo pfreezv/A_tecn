@@ -1,6 +1,6 @@
 
 LONQ — PoC validación de datos EU + Crypto
-Inicio: 2026-04-16 20:49:01
+Inicio: 2026-04-16 21:05:16
 Start date: 2020-01-01  |  MIN_DAYS modelo: 500  |  MAX_GAP: 7d
 
 → Descargando IBEX 35 (20 tickers)…
