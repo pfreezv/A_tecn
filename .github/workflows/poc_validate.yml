@@ -19,7 +19,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: feature/multi-index-scanner
+          ref: claude/debug-project-issues-Ph10r
           fetch-depth: 1
 
       - name: Set up Python ${{ env.PYTHON_VERSION }}
@@ -91,7 +91,7 @@ jobs:
             echo "Sin resultados nuevos que commitear."
           else
             git commit -m "chore: poc data validation results $(date +%Y-%m-%d) [skip ci]"
-            git push origin feature/multi-index-scanner
+            git push origin claude/debug-project-issues-Ph10r
           fi
 
       - name: Send results to Discord
