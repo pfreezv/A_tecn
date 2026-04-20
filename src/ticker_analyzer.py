@@ -40,11 +40,12 @@ class TickerAnalyzer:
         self.deep_result = None
         self.vix_data = None
 
-    def load_data(self, data_path: Optional[str] = None) -> bool:
+    def load_data(self, data_path: Optional[str] = None, auto_download: bool = False) -> bool:
         """Carga datos históricos del ticker.
 
         Args:
             data_path: Ruta al archivo CSV. Si no se proporciona, busca automáticamente.
+            auto_download: Si True, descarga de yfinance si no encuentra datos locales.
 
         Returns:
             True si se cargó exitosamente.
@@ -62,9 +63,40 @@ class TickerAnalyzer:
         if parent_csv.exists():
             return self._load_from_path(str(parent_csv))
 
+        # Intentar descargar de yfinance
+        if auto_download:
+            print(f"📥 Descargando datos para {self.ticker} desde yfinance...")
+            return self._download_yfinance()
+
         print(f"⚠ No se encontraron datos para {self.ticker}")
         print(f"  Buscó: {csv_pattern}, {parent_csv}")
         return False
+
+    def _download_yfinance(self, period: str = "5y") -> bool:
+        """Descarga datos de yfinance."""
+        try:
+            import yfinance as yf
+            df = yf.download(self.ticker, period=period, progress=False)
+
+            if df.empty:
+                print(f"✗ {self.ticker} no es un ticker válido")
+                return False
+
+            # Guardar localmente
+            csv_file = f"{self.ticker.lower()}_data.csv"
+            df.to_csv(csv_file)
+            print(f"✓ {len(df)} filas descargadas y guardadas en {csv_file}")
+
+            # Cargar desde el archivo guardado
+            return self._load_from_path(csv_file)
+
+        except ImportError:
+            print("✗ yfinance no está instalado")
+            print("  Instalar con: pip install yfinance")
+            return False
+        except Exception as e:
+            print(f"✗ Error descargando datos: {e}")
+            return False
 
     def _load_from_path(self, path: str) -> bool:
         """Carga datos desde un archivo CSV."""
