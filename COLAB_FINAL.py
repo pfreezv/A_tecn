@@ -9,14 +9,31 @@ import subprocess
 print("🔧 SETUP ROBUSTO - Corrigiendo rutas...")
 print(f"📍 Ubicación actual: {os.getcwd()}")
 
-# Paso 1: Clonar si no existe
+# Paso 1: Clonar rama correcta si no existe
+BRANCH = 'claude/localize-ticker-model-D6MbH'
 if not os.path.exists('/content/a_tecn'):
-    print("📥 Clonando repositorio...")
-    subprocess.run(['git', 'clone', 'https://github.com/pfreezv/a_tecn.git', '/content/a_tecn'],
-                   capture_output=True)
-    print("✓ Repositorio clonado")
+    print("📥 Clonando repositorio (rama de desarrollo)...")
+    subprocess.run([
+        'git', 'clone',
+        '--branch', BRANCH,
+        'https://github.com/pfreezv/a_tecn.git',
+        '/content/a_tecn'
+    ], capture_output=True)
+    print(f"✓ Repositorio clonado (rama: {BRANCH})")
 else:
-    print("✓ Repositorio ya existe")
+    # Verificar y cambiar a la rama correcta si ya existe
+    result = subprocess.run(['git', '-C', '/content/a_tecn', 'branch', '--show-current'],
+                            capture_output=True, text=True)
+    current_branch = result.stdout.strip()
+    if current_branch != BRANCH:
+        print(f"⚠ Rama actual: {current_branch}. Cambiando a {BRANCH}...")
+        subprocess.run(['git', '-C', '/content/a_tecn', 'fetch', 'origin', BRANCH],
+                       capture_output=True)
+        subprocess.run(['git', '-C', '/content/a_tecn', 'checkout', BRANCH],
+                       capture_output=True)
+        print(f"✓ Cambiado a rama: {BRANCH}")
+    else:
+        print(f"✓ Repositorio listo (rama: {BRANCH})")
 
 # Paso 2: Cambiar a directorio correcto
 repo_path = '/content/a_tecn'
